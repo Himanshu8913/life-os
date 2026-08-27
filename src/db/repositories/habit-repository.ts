@@ -36,6 +36,7 @@ export async function updateHabit(
 }
 
 export async function deleteHabit(id: string): Promise<void> {
+  await deleteCompletionsForHabit(id)
   await db.habits.delete(id)
 }
 
@@ -60,4 +61,12 @@ export async function addHabitCompletion(
   }
   await db.habitCompletions.add(completion)
   return completion
+}
+
+export async function removeHabitCompletion(id: string): Promise<void> {
+  await db.habitCompletions.delete(id)
+}
+
+export async function deleteCompletionsForHabit(habitId: string): Promise<void> {
+  await db.habitCompletions.where('habitId').equals(habitId).delete()
 }

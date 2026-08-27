@@ -12,6 +12,7 @@ import { ROUTES } from '@/lib/constants'
 import { AnimatedPage } from '@/components/layout/animated-page'
 import { QuestCompletionToast } from '@/components/quests/quest-completion-toast'
 import { GoalCompletionToast } from '@/components/goals/goal-completion-toast'
+import { HabitCompletionToast } from '@/components/habits/habit-completion-toast'
 import { useMotionConfig } from '@/hooks/use-motion'
 
 const navItems = [
@@ -123,6 +124,7 @@ export function AppShell() {
       </main>
       <QuestCompletionToast />
       <GoalCompletionToast />
+      <HabitCompletionToast />
     </div>
   )
 }

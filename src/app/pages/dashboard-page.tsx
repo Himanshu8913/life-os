@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Activity, Check, Sparkles, Swords } from 'lucide-react'
+import { Activity, Check, Flame, Sparkles, Swords } from 'lucide-react'
 import { useState } from 'react'
 import { PageHeader } from '@/components/layout/page-header'
 import { AnimatedCard } from '@/components/ui/animated-card'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { QUEST_TYPE_META } from '@/components/quests/quest-meta'
 import { calculateGoalProgress } from '@/domain/goals/goal-progress'
+import { isHabitCompletedToday } from '@/domain/habits/habit-actions'
+import {
+  calculateAggregateMomentum,
+  MOMENTUM_WINDOW_DAYS,
+} from '@/domain/momentum/momentum'
 import { ROUTES } from '@/lib/constants'
 import {
   calculateLevel,
@@ -39,9 +44,12 @@ export function DashboardPage() {
   const completeQuest = useQuestStore((s) => s.completeQuest)
   const goals = useGoalStore((s) => s.goals)
   const habits = useHabitStore((s) => s.habits)
+  const habitCompletions = useHabitStore((s) => s.completions)
+  const toggleHabit = useHabitStore((s) => s.toggleToday)
   const events = useTimelineStore((s) => s.events)
   const { initial, reducedMotion } = useMotionConfig()
   const [completingId, setCompletingId] = useState<string | null>(null)
+  const [togglingHabitId, setTogglingHabitId] = useState<string | null>(null)
 
   const totalXp = profile?.totalXp ?? 0
   const xp = calculateXpProgress(totalXp)
@@ -53,6 +61,11 @@ export function DashboardPage() {
     (q) =>
       q.type === 'DAILY' && ['TODO', 'IN_PROGRESS'].includes(q.status),
   )
+  const activeHabits = habits.filter((h) => !h.archivedAt)
+  const habitMomentum = calculateAggregateMomentum(
+    habitCompletions,
+    activeHabits.map((h) => h.id),
+  )
   const activeGoals = goals.filter((g) => g.status === 'ACTIVE')
   const now = new Date()
 
@@ -62,6 +75,15 @@ export function DashboardPage() {
       await completeQuest(questId)
     } finally {
       setCompletingId(null)
+    }
+  }
+
+  async function handleHabitToggle(habitId: string) {
+    setTogglingHabitId(habitId)
+    try {
+      await toggleHabit(habitId)
+    } finally {
+      setTogglingHabitId(null)
     }
   }
 
@@ -202,17 +224,65 @@ export function DashboardPage() {
           </motion.div>
         </AnimatedCard>
 
-        <AnimatedCard delay={0.2}>
+        <AnimatedCard elevated delay={0.2}>
           <motion.div variants={fadeUp}>
-            <p className="text-xs font-medium tracking-widest text-muted uppercase">
-              Habits
-            </p>
-            <p className="mt-2 font-mono text-3xl font-semibold">
-              {habits.filter((h) => !h.archivedAt).length}
-            </p>
-            <p className="mt-1 text-xs text-foreground-secondary">
-              tracked daily
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="flex items-center gap-2 text-xs font-medium tracking-widest text-muted uppercase">
+                <Flame className="h-3.5 w-3.5 text-orange-400" />
+                Habits Today
+              </p>
+              <Link to={ROUTES.habits} className="text-xs text-accent hover:underline">
+                View all
+              </Link>
+            </div>
+            <ul className="mt-3 space-y-2">
+              {activeHabits.length === 0 ? (
+                <li className="text-sm text-foreground-secondary">No habits yet.</li>
+              ) : (
+                activeHabits.slice(0, 4).map((habit, i) => {
+                  const done = isHabitCompletedToday(habitCompletions, habit.id)
+                  return (
+                    <motion.li
+                      key={habit.id}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-surface/50 px-3 py-2"
+                      initial={reducedMotion ? false : { opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.22 + i * 0.05 }}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className={`truncate text-sm ${done ? 'text-foreground-secondary line-through' : 'font-medium'}`}>
+                          {habit.name}
+                        </p>
+                        <p className="text-xs text-muted">
+                          🔥 {habit.currentStreak} day streak
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => void handleHabitToggle(habit.id)}
+                        disabled={togglingHabitId === habit.id}
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors ${
+                          done
+                            ? 'border-success bg-success/20 text-success'
+                            : 'border-border hover:border-accent hover:text-accent'
+                        }`}
+                        aria-label={`Toggle ${habit.name}`}
+                      >
+                        <Check className="h-4 w-4" />
+                      </button>
+                    </motion.li>
+                  )
+                })
+              )}
+            </ul>
+            {activeHabits.length > 0 && (
+              <div className="mt-4">
+                <ProgressBar
+                  value={habitMomentum.score}
+                  label={`${MOMENTUM_WINDOW_DAYS}d momentum · ${habitMomentum.score}%`}
+                />
+              </div>
+            )}
           </motion.div>
         </AnimatedCard>
 
