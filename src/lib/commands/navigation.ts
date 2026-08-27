@@ -10,7 +10,7 @@ export const COMMAND_DESTINATIONS: Record<
   habits: { path: ROUTES.habits, label: 'Habits' },
   timeline: { path: ROUTES.timeline, label: 'Timeline' },
   settings: { path: ROUTES.settings, label: 'Settings' },
-  observatory: { path: null, label: 'Observatory' },
+  observatory: { path: ROUTES.observatory, label: 'Observatory' },
   'life-map': { path: ROUTES.lifeMap, label: 'Life Map' },
   achievements: { path: ROUTES.achievements, label: 'Achievements' },
 }

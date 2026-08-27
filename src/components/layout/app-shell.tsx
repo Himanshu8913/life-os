@@ -10,6 +10,7 @@ import {
   Command,
   Trophy,
   Map,
+  Telescope,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { AnimatedPage } from '@/components/layout/animated-page'
@@ -35,6 +36,7 @@ const navItems = [
   { to: ROUTES.habits, label: 'Habits', icon: Repeat },
   { to: ROUTES.achievements, label: 'Achievements', icon: Trophy },
   { to: ROUTES.lifeMap, label: 'Life Map', icon: Map },
+  { to: ROUTES.observatory, label: 'Observatory', icon: Telescope },
   { to: ROUTES.timeline, label: 'Timeline', icon: Clock },
   { to: ROUTES.settings, label: 'Settings', icon: Settings },
 ] as const
