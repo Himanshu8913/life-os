@@ -112,8 +112,10 @@ export function LifeMapCanvas({
               return (
                 <g
                   key={area.category}
+                  data-pan-zoom-ignore
                   transform={`translate(${pos.x}, ${pos.y})`}
                   className="cursor-pointer"
+                  onPointerDown={(e) => e.stopPropagation()}
                   onClick={(e) => {
                     e.stopPropagation()
                     onSelectCategory(selected ? null : area.category)
@@ -179,8 +181,10 @@ export function LifeMapCanvas({
 
             {/* Center YOU node */}
             <g
+              data-pan-zoom-ignore
               transform={`translate(${CENTER}, ${CENTER})`}
               className="cursor-pointer"
+              onPointerDown={(e) => e.stopPropagation()}
               onClick={() => onSelectCategory(null)}
               role="button"
               tabIndex={0}
