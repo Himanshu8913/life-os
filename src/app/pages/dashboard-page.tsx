@@ -1,41 +1,43 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Activity, Check, Flame, Sparkles, Swords } from 'lucide-react'
-import { useState } from 'react'
-import { PageHeader } from '@/components/layout/page-header'
+import { Check, Flame } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { DashboardHero } from '@/components/dashboard/dashboard-hero'
+import { LifeAttributesPanel } from '@/components/dashboard/life-attributes-panel'
+import { MomentumSummary } from '@/components/dashboard/momentum-summary'
+import { QuickActions } from '@/components/dashboard/quick-actions'
+import { RecentActivityPanel } from '@/components/dashboard/recent-activity-panel'
+import { GoalFormModal } from '@/components/goals/goal-form-modal'
+import { HabitFormModal } from '@/components/habits/habit-form-modal'
+import { QuestFormModal } from '@/components/quests/quest-form-modal'
 import { AnimatedCard } from '@/components/ui/animated-card'
 import { ProgressBar } from '@/components/ui/progress-bar'
-import { QUEST_TYPE_META } from '@/components/quests/quest-meta'
 import { calculateGoalProgress } from '@/domain/goals/goal-progress'
 import { isHabitCompletedToday } from '@/domain/habits/habit-actions'
 import {
   calculateAggregateMomentum,
-  MOMENTUM_WINDOW_DAYS,
 } from '@/domain/momentum/momentum'
-import { ROUTES } from '@/lib/constants'
 import {
   calculateLevel,
   calculateXpProgress,
 } from '@/domain/progression/calculate-level'
-import { fadeUp, staggerContainer, useMotionConfig } from '@/hooks/use-motion'
+import { formatDashboardDate, getGreeting } from '@/lib/dates/greeting'
+import { ROUTES } from '@/lib/constants'
+import { staggerContainer, useMotionConfig } from '@/hooks/use-motion'
 import { useGoalStore } from '@/stores/goal-store'
 import { useHabitStore } from '@/stores/habit-store'
 import { useProfileStore } from '@/stores/profile-store'
 import { useQuestStore } from '@/stores/quest-store'
 import { useTimelineStore } from '@/stores/timeline-store'
+import type { LifeAttributeKey } from '@/types/enums'
 
-/**
- * Returns a time-of-day greeting based on the device's local clock.
- *
- * @returns The greeting string for the current local hour.
- */
-function getGreeting(): string {
-  const hour = new Date().getHours()
-  if (hour < 5) return 'Good Night'
-  if (hour < 12) return 'Good Morning'
-  if (hour < 17) return 'Good Afternoon'
-  if (hour < 21) return 'Good Evening'
-  return 'Good Night'
+const DEFAULT_ATTRIBUTES: Record<LifeAttributeKey, number> = {
+  discipline: 50,
+  creativity: 50,
+  fitness: 50,
+  learning: 50,
+  social: 50,
+  finance: 50,
 }
 
 export function DashboardPage() {
@@ -48,12 +50,19 @@ export function DashboardPage() {
   const toggleHabit = useHabitStore((s) => s.toggleToday)
   const events = useTimelineStore((s) => s.events)
   const { initial, reducedMotion } = useMotionConfig()
+
   const [completingId, setCompletingId] = useState<string | null>(null)
   const [togglingHabitId, setTogglingHabitId] = useState<string | null>(null)
+  const [questModalOpen, setQuestModalOpen] = useState(false)
+  const [goalModalOpen, setGoalModalOpen] = useState(false)
+  const [habitModalOpen, setHabitModalOpen] = useState(false)
 
+  const now = useMemo(() => new Date(), [])
   const totalXp = profile?.totalXp ?? 0
   const xp = calculateXpProgress(totalXp)
   const level = calculateLevel(totalXp)
+  const attributes = profile?.attributes ?? DEFAULT_ATTRIBUTES
+
   const activeQuests = quests.filter((q) =>
     ['TODO', 'IN_PROGRESS'].includes(q.status),
   )
@@ -62,12 +71,16 @@ export function DashboardPage() {
       q.type === 'DAILY' && ['TODO', 'IN_PROGRESS'].includes(q.status),
   )
   const activeHabits = habits.filter((h) => !h.archivedAt)
+  const activeGoals = goals.filter((g) => g.status === 'ACTIVE')
+
   const habitMomentum = calculateAggregateMomentum(
     habitCompletions,
     activeHabits.map((h) => h.id),
   )
-  const activeGoals = goals.filter((g) => g.status === 'ACTIVE')
-  const now = new Date()
+  const topStreak = activeHabits.reduce(
+    (max, h) => Math.max(max, h.currentStreak),
+    0,
+  )
 
   async function handleQuickComplete(questId: string) {
     setCompletingId(questId)
@@ -88,58 +101,83 @@ export function DashboardPage() {
   }
 
   return (
-    <div>
-      <PageHeader
-        title={getGreeting()}
-        description={now.toLocaleDateString('en-US', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })}
+    <div className="space-y-6">
+      <DashboardHero
+        greeting={getGreeting(now)}
+        dateLine={formatDashboardDate(now)}
+        displayName={profile?.displayName ?? 'Commander'}
+        level={level}
+        totalXp={totalXp}
+        xp={xp}
+      />
+
+      <QuickActions
+        onNewQuest={() => setQuestModalOpen(true)}
+        onNewGoal={() => setGoalModalOpen(true)}
+        onNewHabit={() => setHabitModalOpen(true)}
       />
 
       <motion.div
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        className="grid gap-4 lg:grid-cols-3"
         variants={staggerContainer}
         initial={initial}
         animate="visible"
       >
-        <AnimatedCard elevated className="md:col-span-2 lg:col-span-1" delay={0}>
-          <motion.div variants={fadeUp}>
-            <div className="flex items-center gap-2 text-xs font-medium tracking-widest text-muted uppercase">
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
-              Level {level}
-            </div>
-            <p className="mt-3 font-mono text-4xl font-semibold tabular-nums">
-              {profile?.displayName ?? '—'}
-            </p>
-            <div className="mt-5">
-              <ProgressBar
-                value={xp.currentXp}
-                max={xp.xpForNextLevel - xp.xpForCurrentLevel}
-                label={`${totalXp.toLocaleString()} XP · ${Math.round(xp.progressPercent)}% to next`}
-              />
-            </div>
-          </motion.div>
-        </AnimatedCard>
-
-        <AnimatedCard delay={0.05}>
-          <motion.div variants={fadeUp} className="flex items-start justify-between">
-            <div>
+        <div className="space-y-4 lg:col-span-2">
+          <AnimatedCard elevated delay={0}>
+            <div className="flex items-center justify-between">
               <p className="text-xs font-medium tracking-widest text-muted uppercase">
-                Active Quests
+                Today
               </p>
-              <p className="mt-2 font-mono text-3xl font-semibold">
-                {activeQuests.length}
-              </p>
+              <Link to={ROUTES.quests} className="text-xs text-accent hover:underline">
+                All quests
+              </Link>
             </div>
-            <Swords className="h-5 w-5 text-accent/70" />
-          </motion.div>
-        </AnimatedCard>
+            <ul className="mt-4 space-y-2">
+              {todayQuests.length === 0 && activeQuests.length === 0 ? (
+                <li className="text-sm text-foreground-secondary">
+                  Nothing on the board.{' '}
+                  <button
+                    type="button"
+                    className="text-accent hover:underline"
+                    onClick={() => setQuestModalOpen(true)}
+                  >
+                    Add a quest
+                  </button>
+                </li>
+              ) : (
+                (todayQuests.length > 0 ? todayQuests : activeQuests.slice(0, 5)).map(
+                  (quest, i) => (
+                    <motion.li
+                      key={quest.id}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-surface/50 px-3 py-2.5"
+                      initial={reducedMotion ? false : { opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + i * 0.04 }}
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">{quest.title}</p>
+                        <p className="font-mono text-xs text-accent">
+                          +{quest.xpReward} XP
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => void handleQuickComplete(quest.id)}
+                        disabled={completingId === quest.id}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border transition-colors hover:border-accent hover:bg-accent/20 hover:text-accent disabled:opacity-50"
+                        aria-label={`Complete ${quest.title}`}
+                      >
+                        <Check className="h-4 w-4" />
+                      </button>
+                    </motion.li>
+                  ),
+                )
+              )}
+            </ul>
+          </AnimatedCard>
 
-        <AnimatedCard delay={0.1}>
-          <motion.div variants={fadeUp}>
+          <AnimatedCard delay={0.05}>
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium tracking-widest text-muted uppercase">
                 Active Goals
@@ -169,67 +207,13 @@ export function DashboardPage() {
                 ))
               )}
             </ul>
-          </motion.div>
-        </AnimatedCard>
+          </AnimatedCard>
 
-        <AnimatedCard elevated className="md:col-span-2" delay={0.15}>
-          <motion.div variants={fadeUp}>
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium tracking-widest text-muted uppercase">
-                Today&apos;s Quests
-              </p>
-              <Link
-                to={ROUTES.quests}
-                className="text-xs text-accent hover:underline"
-              >
-                View all
-              </Link>
-            </div>
-            <ul className="mt-4 space-y-2">
-              {todayQuests.length === 0 ? (
-                <li className="text-sm text-foreground-secondary">
-                  No daily quests.{' '}
-                  <Link to={ROUTES.quests} className="text-accent hover:underline">
-                    Add one
-                  </Link>
-                </li>
-              ) : (
-                todayQuests.map((quest, i) => (
-                  <motion.li
-                    key={quest.id}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-surface/50 px-3 py-2.5"
-                    initial={reducedMotion ? false : { opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + i * 0.05 }}
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">{quest.title}</p>
-                      <p className="text-xs text-accent font-mono">
-                        +{quest.xpReward} XP
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => void handleQuickComplete(quest.id)}
-                      disabled={completingId === quest.id}
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border bg-surface-elevated text-foreground-secondary transition-colors hover:border-accent hover:bg-accent/20 hover:text-accent disabled:opacity-50"
-                      aria-label={`Complete ${quest.title}`}
-                    >
-                      <Check className="h-4 w-4" />
-                    </button>
-                  </motion.li>
-                ))
-              )}
-            </ul>
-          </motion.div>
-        </AnimatedCard>
-
-        <AnimatedCard elevated delay={0.2}>
-          <motion.div variants={fadeUp}>
+          <AnimatedCard delay={0.1}>
             <div className="flex items-center justify-between">
               <p className="flex items-center gap-2 text-xs font-medium tracking-widest text-muted uppercase">
                 <Flame className="h-3.5 w-3.5 text-orange-400" />
-                Habits Today
+                Habits
               </p>
               <Link to={ROUTES.habits} className="text-xs text-accent hover:underline">
                 View all
@@ -247,10 +231,12 @@ export function DashboardPage() {
                       className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-surface/50 px-3 py-2"
                       initial={reducedMotion ? false : { opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.22 + i * 0.05 }}
+                      transition={{ delay: 0.12 + i * 0.04 }}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className={`truncate text-sm ${done ? 'text-foreground-secondary line-through' : 'font-medium'}`}>
+                        <p
+                          className={`truncate text-sm ${done ? 'text-foreground-secondary line-through' : 'font-medium'}`}
+                        >
                           {habit.name}
                         </p>
                         <p className="text-xs text-muted">
@@ -275,67 +261,19 @@ export function DashboardPage() {
                 })
               )}
             </ul>
-            {activeHabits.length > 0 && (
-              <div className="mt-4">
-                <ProgressBar
-                  value={habitMomentum.score}
-                  label={`${MOMENTUM_WINDOW_DAYS}d momentum · ${habitMomentum.score}%`}
-                />
-              </div>
-            )}
-          </motion.div>
-        </AnimatedCard>
+          </AnimatedCard>
+        </div>
 
-        <AnimatedCard elevated className="md:col-span-2" delay={0.25}>
-          <motion.div variants={fadeUp}>
-            <div className="flex items-center gap-2 text-xs font-medium tracking-widest text-muted uppercase">
-              <Activity className="h-3.5 w-3.5" />
-              Recent Activity
-            </div>
-            <ul className="mt-4 space-y-3">
-              {events.slice(0, 4).map((event, i) => (
-                <motion.li
-                  key={event.id}
-                  className="flex items-center justify-between border-b border-border/50 pb-3 last:border-0 last:pb-0"
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + i * 0.06 }}
-                >
-                  <span className="text-sm">{event.title}</span>
-                  <span className="text-xs text-muted">
-                    {new Date(event.createdAt).toLocaleDateString()}
-                  </span>
-                </motion.li>
-              ))}
-              {events.length === 0 && (
-                <li className="text-sm text-foreground-secondary">
-                  No activity yet.
-                </li>
-              )}
-            </ul>
-          </motion.div>
-        </AnimatedCard>
-
-        <AnimatedCard delay={0.3}>
-          <motion.div variants={fadeUp}>
-            <p className="text-xs font-medium tracking-widest text-muted uppercase">
-              Quest Types
-            </p>
-            <dl className="mt-4 space-y-2 text-sm">
-              {(['DAILY', 'SIDE', 'MAIN', 'EPIC'] as const).map((type) => (
-                <div key={type} className="flex justify-between">
-                  <dt className="text-foreground-secondary">
-                    {QUEST_TYPE_META[type].icon} {QUEST_TYPE_META[type].label}
-                  </dt>
-                  <dd className="font-mono">
-                    {quests.filter((q) => q.type === type).length}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </motion.div>
-        </AnimatedCard>
+        <div className="space-y-4">
+          <LifeAttributesPanel attributes={attributes} />
+          <MomentumSummary momentum={habitMomentum} topStreak={topStreak} />
+          <RecentActivityPanel events={events} />
+        </div>
       </motion.div>
+
+      <QuestFormModal open={questModalOpen} onClose={() => setQuestModalOpen(false)} />
+      <GoalFormModal open={goalModalOpen} onClose={() => setGoalModalOpen(false)} />
+      <HabitFormModal open={habitModalOpen} onClose={() => setHabitModalOpen(false)} />
     </div>
   )
 }
