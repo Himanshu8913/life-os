@@ -1,19 +1,10 @@
+import { getEventMeta } from '@/domain/timeline/event-meta'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Activity } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { fadeUp } from '@/hooks/use-motion'
 import type { TimelineEvent } from '@/types'
-
-const EVENT_ICONS: Record<string, string> = {
-  QUEST_COMPLETED: '⚔',
-  GOAL_CREATED: '🎯',
-  GOAL_COMPLETED: '🏆',
-  MILESTONE_COMPLETED: '◆',
-  HABIT_COMPLETED: '🔥',
-  LEVEL_UP: '✦',
-  ACHIEVEMENT_UNLOCKED: '★',
-}
 
 interface RecentActivityPanelProps {
   events: TimelineEvent[]
@@ -44,7 +35,7 @@ export function RecentActivityPanel({ events }: RecentActivityPanelProps) {
             transition={{ delay: 0.05 * i }}
           >
             <span className="mt-0.5 text-sm" aria-hidden>
-              {EVENT_ICONS[event.type] ?? '·'}
+              {getEventMeta(event.type).icon}
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm">{event.title}</p>
