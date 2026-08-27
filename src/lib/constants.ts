@@ -10,6 +10,7 @@ export const ROUTES = {
   achievements: '/achievements',
   lifeMap: '/life-map',
   observatory: '/observatory',
+  reflection: '/reflection',
   settings: '/settings',
 } as const
 
