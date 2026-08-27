@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { AnimatedPage } from '@/components/layout/animated-page'
+import { QuestCompletionToast } from '@/components/quests/quest-completion-toast'
 import { useMotionConfig } from '@/hooks/use-motion'
 
 const navItems = [
@@ -119,6 +120,7 @@ export function AppShell() {
           </AnimatePresence>
         </div>
       </main>
+      <QuestCompletionToast />
     </div>
   )
 }
