@@ -1,9 +1,11 @@
 import { create } from 'zustand'
+import type { AppSettings } from '@/types'
+import { updateSettings as updateSettingsRepo } from '@/db/repositories/settings-repository'
 
 /**
  * Global application settings and bootstrap state.
  *
- * `isHydrated` becomes true after the DB bootstrap attempt finishes (success or failure).
+ * `isHydrated` becomes true after the DB bootstrap attempt finishes.
  * `isDbReady` is true only when IndexedDB initialized successfully.
  */
 export interface SettingsState {
@@ -15,6 +17,7 @@ export interface SettingsState {
   setReducedMotion: (value: boolean) => void
   setHydrated: (value: boolean) => void
   setDbReady: (value: boolean) => void
+  hydrateFromDb: (settings: AppSettings) => void
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
@@ -22,8 +25,19 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   reducedMotion: false,
   isHydrated: false,
   isDbReady: false,
-  setAccentColor: (accentColor) => set({ accentColor }),
-  setReducedMotion: (reducedMotion) => set({ reducedMotion }),
   setHydrated: (isHydrated) => set({ isHydrated }),
   setDbReady: (isDbReady) => set({ isDbReady }),
+  hydrateFromDb: (settings) =>
+    set({
+      accentColor: settings.accentColor,
+      reducedMotion: settings.reducedMotion,
+    }),
+  setAccentColor: (accentColor) => {
+    set({ accentColor })
+    void updateSettingsRepo({ accentColor })
+  },
+  setReducedMotion: (reducedMotion) => {
+    set({ reducedMotion })
+    void updateSettingsRepo({ reducedMotion })
+  },
 }))
