@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Field, Input, Select, Textarea } from '@/components/ui/form-field'
 import { Modal } from '@/components/ui/modal'
@@ -17,8 +17,10 @@ interface QuestFormModalProps {
 export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
   const addQuest = useQuestStore((s) => s.addQuest)
   const editQuest = useQuestStore((s) => s.editQuest)
-  const activeGoals = useGoalStore((s) =>
-    s.goals.filter((g) => g.status === 'ACTIVE'),
+  const goals = useGoalStore((s) => s.goals)
+  const activeGoals = useMemo(
+    () => goals.filter((g) => g.status === 'ACTIVE'),
+    [goals],
   )
   const isEdit = Boolean(quest)
 

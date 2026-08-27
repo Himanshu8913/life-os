@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useSettingsStore } from '@/stores/settings-store'
 import type { Transition, Variants } from 'framer-motion'
 
@@ -30,9 +31,12 @@ export const scaleIn: Variants = {
  */
 export function useMotionConfig() {
   const reducedMotion = useSettingsStore((s) => s.reducedMotion)
-  return {
-    reducedMotion,
-    transition: reducedMotion ? ({ duration: 0 } as Transition) : spring,
-    initial: reducedMotion ? false : ('hidden' as const),
-  }
+  return useMemo(
+    () => ({
+      reducedMotion,
+      transition: reducedMotion ? ({ duration: 0 } as Transition) : spring,
+      initial: reducedMotion ? false : ('hidden' as const),
+    }),
+    [reducedMotion],
+  )
 }
