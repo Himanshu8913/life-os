@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Activity, Check, Sparkles, Swords, Target } from 'lucide-react'
+import { Activity, Check, Sparkles, Swords } from 'lucide-react'
 import { useState } from 'react'
 import { PageHeader } from '@/components/layout/page-header'
 import { AnimatedCard } from '@/components/ui/animated-card'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { QUEST_TYPE_META } from '@/components/quests/quest-meta'
+import { calculateGoalProgress } from '@/domain/goals/goal-progress'
 import { ROUTES } from '@/lib/constants'
 import {
   calculateLevel,
@@ -116,16 +117,36 @@ export function DashboardPage() {
         </AnimatedCard>
 
         <AnimatedCard delay={0.1}>
-          <motion.div variants={fadeUp} className="flex items-start justify-between">
-            <div>
+          <motion.div variants={fadeUp}>
+            <div className="flex items-center justify-between">
               <p className="text-xs font-medium tracking-widest text-muted uppercase">
                 Active Goals
               </p>
-              <p className="mt-2 font-mono text-3xl font-semibold">
-                {activeGoals.length}
-              </p>
+              <Link to={ROUTES.goals} className="text-xs text-accent hover:underline">
+                View all
+              </Link>
             </div>
-            <Target className="h-5 w-5 text-accent/70" />
+            <ul className="mt-3 space-y-2">
+              {activeGoals.length === 0 ? (
+                <li className="text-sm text-foreground-secondary">No active goals.</li>
+              ) : (
+                activeGoals.slice(0, 3).map((goal) => (
+                  <li key={goal.id}>
+                    <Link
+                      to={ROUTES.goals}
+                      className="block rounded-lg border border-border/60 bg-surface/50 p-3 transition-colors hover:border-accent/40"
+                    >
+                      <p className="text-sm font-medium">{goal.title}</p>
+                      <div className="mt-2">
+                        <ProgressBar
+                          value={calculateGoalProgress(goal.milestones)}
+                        />
+                      </div>
+                    </Link>
+                  </li>
+                ))
+              )}
+            </ul>
           </motion.div>
         </AnimatedCard>
 

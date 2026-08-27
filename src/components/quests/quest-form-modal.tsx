@@ -4,6 +4,7 @@ import { Field, Input, Select, Textarea } from '@/components/ui/form-field'
 import { Modal } from '@/components/ui/modal'
 import { getDefaultXpForType } from '@/domain/quests/xp-config'
 import { useQuestStore, type CreateQuestInput } from '@/stores/quest-store'
+import { useGoalStore } from '@/stores/goal-store'
 import type { Priority, Quest, QuestType } from '@/types'
 import { PRIORITIES, QUEST_TYPES } from '@/types/enums'
 
@@ -16,6 +17,9 @@ interface QuestFormModalProps {
 export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
   const addQuest = useQuestStore((s) => s.addQuest)
   const editQuest = useQuestStore((s) => s.editQuest)
+  const activeGoals = useGoalStore((s) =>
+    s.goals.filter((g) => g.status === 'ACTIVE'),
+  )
   const isEdit = Boolean(quest)
 
   const [title, setTitle] = useState('')
@@ -24,6 +28,7 @@ export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
   const [priority, setPriority] = useState<Priority>('MEDIUM')
   const [xpReward, setXpReward] = useState(getDefaultXpForType('SIDE'))
   const [dueDate, setDueDate] = useState('')
+  const [goalId, setGoalId] = useState('')
   const [tags, setTags] = useState('')
   const [notes, setNotes] = useState('')
   const [status, setStatus] = useState<Quest['status']>('TODO')
@@ -38,6 +43,7 @@ export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
       setPriority(quest.priority)
       setXpReward(quest.xpReward)
       setDueDate(quest.dueDate?.slice(0, 10) ?? '')
+      setGoalId(quest.goalId ?? '')
       setTags(quest.tags?.join(', ') ?? '')
       setNotes(quest.notes ?? '')
       setStatus(quest.status)
@@ -48,6 +54,7 @@ export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
       setPriority('MEDIUM')
       setXpReward(getDefaultXpForType('SIDE'))
       setDueDate('')
+      setGoalId('')
       setTags('')
       setNotes('')
       setStatus('TODO')
@@ -77,6 +84,7 @@ export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
           priority,
           xpReward,
           dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+          goalId: goalId || undefined,
           tags: tagList.length ? tagList : undefined,
           notes: notes.trim() || undefined,
           status,
@@ -89,6 +97,7 @@ export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
           priority,
           xpReward,
           dueDate: dueDate ? new Date(dueDate).toISOString() : undefined,
+          goalId: goalId || undefined,
           tags: tagList.length ? tagList : undefined,
           notes: notes.trim() || undefined,
         }
@@ -178,6 +187,23 @@ export function QuestFormModal({ open, onClose, quest }: QuestFormModalProps) {
             />
           </Field>
         </div>
+
+        {activeGoals.length > 0 && (
+          <Field label="Link to Goal" htmlFor="quest-goal">
+            <Select
+              id="quest-goal"
+              value={goalId}
+              onChange={(e) => setGoalId(e.target.value)}
+            >
+              <option value="">None</option>
+              {activeGoals.map((g) => (
+                <option key={g.id} value={g.id}>
+                  {g.title}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        )}
 
         {isEdit && (
           <Field label="Status" htmlFor="quest-status">

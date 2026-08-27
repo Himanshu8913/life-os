@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { completeQuest as completeQuestDomain } from '@/domain/quests/complete-quest'
 import { getDefaultXpForType } from '@/domain/quests/xp-config'
+import { linkQuestToGoal } from '@/domain/goals/goal-actions'
 import {
   createQuest as createQuestRepo,
   deleteQuest as deleteQuestRepo,
@@ -8,6 +9,7 @@ import {
   updateQuest as updateQuestRepo,
 } from '@/db/repositories/quest-repository'
 import { getAllTimelineEvents } from '@/db/repositories/timeline-repository'
+import { useGoalStore } from '@/stores/goal-store'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
 import type { Priority, Quest, QuestStatus, QuestType } from '@/types'
@@ -21,6 +23,7 @@ export interface CreateQuestInput {
   dueDate?: string
   tags?: string[]
   notes?: string
+  goalId?: string
 }
 
 export interface QuestCompletionToast {
@@ -66,15 +69,31 @@ export const useQuestStore = create<QuestState>((set, get) => ({
       priority: input.priority,
       xpReward: input.xpReward ?? getDefaultXpForType(input.type),
       dueDate: input.dueDate,
+      goalId: input.goalId,
       tags: input.tags,
       notes: input.notes,
     })
+    if (input.goalId) {
+      const goal = await linkQuestToGoal(input.goalId, quest.id)
+      useGoalStore.getState().setGoals(
+        useGoalStore.getState().goals.map((g) => (g.id === goal.id ? goal : g)),
+      )
+    }
     set({ quests: [quest, ...get().quests] })
     return quest
   },
 
   editQuest: async (id, updates) => {
+    const previous = get().quests.find((q) => q.id === id)
     const updated = await updateQuestRepo(id, updates)
+    if (updates.goalId !== undefined && updates.goalId !== previous?.goalId) {
+      if (previous?.goalId) {
+        await useGoalStore.getState().detachQuest(previous.goalId, id)
+      }
+      if (updates.goalId) {
+        await useGoalStore.getState().attachQuest(updates.goalId, id)
+      }
+    }
     set({
       quests: get().quests.map((q) => (q.id === id ? updated : q)),
     })
