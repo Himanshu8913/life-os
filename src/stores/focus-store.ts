@@ -8,6 +8,7 @@ import {
   getAllFocusSessions,
 } from '@/db/repositories/focus-repository'
 import { getAllTimelineEvents } from '@/db/repositories/timeline-repository'
+import { syncGamificationAfterAction } from '@/lib/gamification/sync-gamification'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
 
@@ -72,6 +73,11 @@ export const useFocusStore = create<FocusState>((set, get) => ({
     ])
     useProfileStore.getState().setFocusSessions(sessions)
     useTimelineStore.getState().setEvents(events)
+
+    await syncGamificationAfterAction({
+      leveledUp: result.leveledUp,
+      newLevel: result.newLevel,
+    })
 
     set({
       active: null,

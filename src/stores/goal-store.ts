@@ -19,6 +19,7 @@ import {
 } from '@/db/repositories/goal-repository'
 import { updateQuest } from '@/db/repositories/quest-repository'
 import { addTimelineEvent, getAllTimelineEvents } from '@/db/repositories/timeline-repository'
+import { syncGamificationAfterAction } from '@/lib/gamification/sync-gamification'
 import { generateId } from '@/lib/ids/generate-id'
 import { useProfileStore } from '@/stores/profile-store'
 import { useQuestStore } from '@/stores/quest-store'
@@ -176,6 +177,10 @@ export const useGoalStore = create<GoalState>((set, get) => ({
     })
     if (result.xpGained > 0) {
       await syncAfterXp(result.profileTotalXp)
+      await syncGamificationAfterAction({
+        leveledUp: result.leveledUp,
+        newLevel: result.newLevel,
+      })
     } else {
       const events = await getAllTimelineEvents()
       useTimelineStore.getState().setEvents(events)
@@ -214,6 +219,10 @@ export const useGoalStore = create<GoalState>((set, get) => ({
       },
     })
     await syncAfterXp(result.profileTotalXp)
+    await syncGamificationAfterAction({
+      leveledUp: result.leveledUp,
+      newLevel: result.newLevel,
+    })
   },
 
   attachQuest: async (goalId, questId) => {

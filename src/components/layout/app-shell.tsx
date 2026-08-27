@@ -8,9 +8,12 @@ import {
   Clock,
   Settings,
   Command,
+  Trophy,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { AnimatedPage } from '@/components/layout/animated-page'
+import { AchievementUnlockToast } from '@/components/gamification/achievement-unlock-toast'
+import { LevelUpOverlay } from '@/components/gamification/level-up-overlay'
 import { CommandFeedbackToast } from '@/components/command-palette/command-feedback-toast'
 import { CommandPalette } from '@/components/command-palette/command-palette'
 import { FocusCompletionToast } from '@/components/command-palette/focus-completion-toast'
@@ -29,6 +32,7 @@ const navItems = [
   { to: ROUTES.quests, label: 'Quests', icon: Swords },
   { to: ROUTES.goals, label: 'Goals', icon: Target },
   { to: ROUTES.habits, label: 'Habits', icon: Repeat },
+  { to: ROUTES.achievements, label: 'Achievements', icon: Trophy },
   { to: ROUTES.timeline, label: 'Timeline', icon: Clock },
   { to: ROUTES.settings, label: 'Settings', icon: Settings },
 ] as const
@@ -168,6 +172,8 @@ export function AppShell() {
       <HabitCompletionToast />
       <FocusCompletionToast />
       <CommandFeedbackToast />
+      <LevelUpOverlay />
+      <AchievementUnlockToast />
     </div>
   )
 }

@@ -1,5 +1,9 @@
 import { calculateLevel } from '@/domain/progression/calculate-level'
-import { getFocusXp } from '@/domain/focus/xp-config'
+import { getFocusXp } from '@/domain/progression/xp-config'
+import {
+  applyAttributeRewards,
+  FOCUS_ATTRIBUTE_REWARDS,
+} from '@/domain/progression/attributes'
 import { db } from '@/db/database'
 import {
   createFocusSession,
@@ -58,7 +62,10 @@ export async function completeFocusSession(
     xpEarned: xp,
   })
 
-  await updateProfile({ totalXp: newTotalXp })
+  await updateProfile({
+    totalXp: newTotalXp,
+    attributes: applyAttributeRewards(profile.attributes, FOCUS_ATTRIBUTE_REWARDS),
+  })
 
   await addTimelineEvent({
     type: 'CUSTOM',

@@ -8,6 +8,7 @@ import {
   updateHabit as updateHabitRepo,
 } from '@/db/repositories/habit-repository'
 import { getAllTimelineEvents } from '@/db/repositories/timeline-repository'
+import { syncGamificationAfterAction } from '@/lib/gamification/sync-gamification'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
 import type { Habit, HabitCompletion, HabitFrequency } from '@/types'
@@ -124,5 +125,12 @@ export const useHabitStore = create<HabitState>((set, get) => ({
 
     const events = await getAllTimelineEvents()
     useTimelineStore.getState().setEvents(events)
+
+    if (result.xpGained > 0) {
+      await syncGamificationAfterAction({
+        leveledUp: result.leveledUp,
+        newLevel: result.newLevel,
+      })
+    }
   },
 }))

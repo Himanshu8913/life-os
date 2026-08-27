@@ -12,5 +12,5 @@ export const COMMAND_DESTINATIONS: Record<
   settings: { path: ROUTES.settings, label: 'Settings' },
   observatory: { path: null, label: 'Observatory' },
   'life-map': { path: null, label: 'Life Map' },
-  achievements: { path: null, label: 'Achievements' },
+  achievements: { path: ROUTES.achievements, label: 'Achievements' },
 }

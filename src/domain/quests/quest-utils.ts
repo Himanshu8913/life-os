@@ -1,7 +1,7 @@
-import type { AttributeReward, LifeAttributeKey, Quest, UserProfile } from '@/types'
+import type { Quest, UserProfile } from '@/types'
+import { applyAttributeRewards } from '@/domain/progression/attributes'
 
-const ATTRIBUTE_MAX = 100
-const ATTRIBUTE_MIN = 0
+export { applyAttributeRewards }
 
 /**
  * Computes milestone completion percentage for quests with objectives.
@@ -14,29 +14,6 @@ export function calculateQuestProgress(quest: Quest): number {
   if (!quest.milestones?.length) return 0
   const done = quest.milestones.filter((m) => m.completed).length
   return Math.round((done / quest.milestones.length) * 100)
-}
-
-/**
- * Applies attribute rewards to a profile, clamping each attribute to 0–100.
- *
- * @param attributes - Current attribute scores.
- * @param rewards - Optional rewards from a completed quest.
- * @returns Updated attribute map.
- */
-export function applyAttributeRewards(
-  attributes: Record<LifeAttributeKey, number>,
-  rewards: AttributeReward[] | undefined,
-): Record<LifeAttributeKey, number> {
-  if (!rewards?.length) return attributes
-
-  const next = { ...attributes }
-  for (const { attribute, amount } of rewards) {
-    next[attribute] = Math.min(
-      ATTRIBUTE_MAX,
-      Math.max(ATTRIBUTE_MIN, next[attribute] + amount),
-    )
-  }
-  return next
 }
 
 export interface QuestCompletionResult {

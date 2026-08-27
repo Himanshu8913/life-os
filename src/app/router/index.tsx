@@ -5,6 +5,7 @@ import { DashboardPage } from '@/app/pages/dashboard-page'
 import { QuestsPage } from '@/app/pages/quests-page'
 import { GoalsPage } from '@/app/pages/goals-page'
 import { HabitsPage } from '@/app/pages/habits-page'
+import { AchievementsPage } from '@/app/pages/achievements-page'
 import { TimelinePage } from '@/app/pages/timeline-page'
 import { SettingsPage } from '@/app/pages/settings-page'
 
@@ -17,6 +18,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.goals, element: <GoalsPage /> },
       { path: ROUTES.habits, element: <HabitsPage /> },
       { path: ROUTES.timeline, element: <TimelinePage /> },
+      { path: ROUTES.achievements, element: <AchievementsPage /> },
       { path: ROUTES.settings, element: <SettingsPage /> },
     ],
   },

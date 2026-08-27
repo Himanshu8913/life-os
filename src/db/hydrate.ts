@@ -8,6 +8,7 @@ import { getOrCreateSettings } from '@/db/repositories/settings-repository'
 import { getAllTimelineEvents } from '@/db/repositories/timeline-repository'
 import { seedDemoData } from '@/db/seed'
 import { db } from '@/db/database'
+import { checkAndUnlockAchievements } from '@/domain/achievements/check-achievements'
 import { useAchievementStore } from '@/stores/achievement-store'
 import { useGoalStore } from '@/stores/goal-store'
 import { useHabitStore } from '@/stores/habit-store'
@@ -62,6 +63,15 @@ export async function hydrateStores(): Promise<void> {
 
   useProfileStore.getState().setFocusSessions(focusSessions)
   useProfileStore.getState().setMoodEntries(moodEntries)
+
+  const unlocked = await checkAndUnlockAchievements()
+  if (unlocked.length > 0) {
+    const refreshedAchievements = await getAllAchievements()
+    useAchievementStore.getState().setAchievements(refreshedAchievements)
+    useAchievementStore.getState().queueUnlockToasts(unlocked)
+    const refreshedTimeline = await getAllTimelineEvents()
+    useTimelineStore.getState().setEvents(refreshedTimeline)
+  }
 }
 
 /**

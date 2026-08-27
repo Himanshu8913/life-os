@@ -9,6 +9,7 @@ import {
   updateQuest as updateQuestRepo,
 } from '@/db/repositories/quest-repository'
 import { getAllTimelineEvents } from '@/db/repositories/timeline-repository'
+import { syncGamificationAfterAction } from '@/lib/gamification/sync-gamification'
 import { useGoalStore } from '@/stores/goal-store'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
@@ -120,6 +121,10 @@ export const useQuestStore = create<QuestState>((set, get) => ({
     useProfileStore.getState().setProfile(result.profile)
     const events = await getAllTimelineEvents()
     useTimelineStore.getState().setEvents(events)
+    await syncGamificationAfterAction({
+      leveledUp: result.leveledUp,
+      newLevel: result.newLevel,
+    })
   },
 
   archiveQuest: async (id) => {
