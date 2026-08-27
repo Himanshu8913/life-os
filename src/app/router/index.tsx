@@ -7,6 +7,7 @@ import { GoalsPage } from '@/app/pages/goals-page'
 import { HabitsPage } from '@/app/pages/habits-page'
 import { AchievementsPage } from '@/app/pages/achievements-page'
 import { TimelinePage } from '@/app/pages/timeline-page'
+import { LifeMapPage } from '@/app/pages/life-map-page'
 import { SettingsPage } from '@/app/pages/settings-page'
 
 export const router = createBrowserRouter([
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: ROUTES.habits, element: <HabitsPage /> },
       { path: ROUTES.timeline, element: <TimelinePage /> },
       { path: ROUTES.achievements, element: <AchievementsPage /> },
+      { path: ROUTES.lifeMap, element: <LifeMapPage /> },
       { path: ROUTES.settings, element: <SettingsPage /> },
     ],
   },

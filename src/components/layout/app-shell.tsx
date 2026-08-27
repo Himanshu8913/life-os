@@ -9,6 +9,7 @@ import {
   Settings,
   Command,
   Trophy,
+  Map,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { AnimatedPage } from '@/components/layout/animated-page'
@@ -33,6 +34,7 @@ const navItems = [
   { to: ROUTES.goals, label: 'Goals', icon: Target },
   { to: ROUTES.habits, label: 'Habits', icon: Repeat },
   { to: ROUTES.achievements, label: 'Achievements', icon: Trophy },
+  { to: ROUTES.lifeMap, label: 'Life Map', icon: Map },
   { to: ROUTES.timeline, label: 'Timeline', icon: Clock },
   { to: ROUTES.settings, label: 'Settings', icon: Settings },
 ] as const

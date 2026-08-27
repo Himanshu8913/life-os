@@ -1,19 +1,4 @@
-import type { GoalCategory } from '@/types'
-
-export const GOAL_CATEGORY_META: Record<
-  GoalCategory,
-  { label: string; icon: string }
-> = {
-  WORK: { label: 'Work', icon: '💼' },
-  LEARNING: { label: 'Learning', icon: '📚' },
-  FITNESS: { label: 'Fitness', icon: '🏋' },
-  FINANCE: { label: 'Finance', icon: '💰' },
-  RELATIONSHIPS: { label: 'Relationships', icon: '🤝' },
-  PERSONAL: { label: 'Personal', icon: '✦' },
-  CREATIVE: { label: 'Creative', icon: '🎨' },
-  TRAVEL: { label: 'Travel', icon: '✈' },
-  OTHER: { label: 'Other', icon: '○' },
-}
+export { GOAL_CATEGORY_META } from '@/domain/goals/category-meta'
 
 export const GOAL_STATUS_META = {
   ACTIVE: { label: 'Active', className: 'bg-accent/15 text-accent' },

@@ -8,6 +8,7 @@ export const ROUTES = {
   habits: '/habits',
   timeline: '/timeline',
   achievements: '/achievements',
+  lifeMap: '/life-map',
   settings: '/settings',
 } as const
 

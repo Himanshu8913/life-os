@@ -11,6 +11,6 @@ export const COMMAND_DESTINATIONS: Record<
   timeline: { path: ROUTES.timeline, label: 'Timeline' },
   settings: { path: ROUTES.settings, label: 'Settings' },
   observatory: { path: null, label: 'Observatory' },
-  'life-map': { path: null, label: 'Life Map' },
+  'life-map': { path: ROUTES.lifeMap, label: 'Life Map' },
   achievements: { path: ROUTES.achievements, label: 'Achievements' },
 }
