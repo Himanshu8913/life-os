@@ -7,9 +7,6 @@ import { LifeAttributesPanel } from '@/components/dashboard/life-attributes-pane
 import { MomentumSummary } from '@/components/dashboard/momentum-summary'
 import { QuickActions } from '@/components/dashboard/quick-actions'
 import { RecentActivityPanel } from '@/components/dashboard/recent-activity-panel'
-import { GoalFormModal } from '@/components/goals/goal-form-modal'
-import { HabitFormModal } from '@/components/habits/habit-form-modal'
-import { QuestFormModal } from '@/components/quests/quest-form-modal'
 import { AnimatedCard } from '@/components/ui/animated-card'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { calculateGoalProgress } from '@/domain/goals/goal-progress'
@@ -24,6 +21,7 @@ import {
 import { formatDashboardDate, getGreeting } from '@/lib/dates/greeting'
 import { ROUTES } from '@/lib/constants'
 import { staggerContainer, useMotionConfig } from '@/hooks/use-motion'
+import { useCommandPaletteStore } from '@/stores/command-palette-store'
 import { useGoalStore } from '@/stores/goal-store'
 import { useHabitStore } from '@/stores/habit-store'
 import { useProfileStore } from '@/stores/profile-store'
@@ -53,9 +51,7 @@ export function DashboardPage() {
 
   const [completingId, setCompletingId] = useState<string | null>(null)
   const [togglingHabitId, setTogglingHabitId] = useState<string | null>(null)
-  const [questModalOpen, setQuestModalOpen] = useState(false)
-  const [goalModalOpen, setGoalModalOpen] = useState(false)
-  const [habitModalOpen, setHabitModalOpen] = useState(false)
+  const openModal = useCommandPaletteStore((s) => s.openModal)
 
   const now = useMemo(() => new Date(), [])
   const totalXp = profile?.totalXp ?? 0
@@ -112,9 +108,9 @@ export function DashboardPage() {
       />
 
       <QuickActions
-        onNewQuest={() => setQuestModalOpen(true)}
-        onNewGoal={() => setGoalModalOpen(true)}
-        onNewHabit={() => setHabitModalOpen(true)}
+        onNewQuest={() => openModal('quest')}
+        onNewGoal={() => openModal('goal')}
+        onNewHabit={() => openModal('habit')}
       />
 
       <motion.div
@@ -140,7 +136,7 @@ export function DashboardPage() {
                   <button
                     type="button"
                     className="text-accent hover:underline"
-                    onClick={() => setQuestModalOpen(true)}
+                    onClick={() => openModal('quest')}
                   >
                     Add a quest
                   </button>
@@ -271,9 +267,6 @@ export function DashboardPage() {
         </div>
       </motion.div>
 
-      <QuestFormModal open={questModalOpen} onClose={() => setQuestModalOpen(false)} />
-      <GoalFormModal open={goalModalOpen} onClose={() => setGoalModalOpen(false)} />
-      <HabitFormModal open={habitModalOpen} onClose={() => setHabitModalOpen(false)} />
     </div>
   )
 }

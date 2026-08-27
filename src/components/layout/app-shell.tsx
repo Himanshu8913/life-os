@@ -7,13 +7,22 @@ import {
   Repeat,
   Clock,
   Settings,
+  Command,
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { AnimatedPage } from '@/components/layout/animated-page'
+import { CommandFeedbackToast } from '@/components/command-palette/command-feedback-toast'
+import { CommandPalette } from '@/components/command-palette/command-palette'
+import { FocusCompletionToast } from '@/components/command-palette/focus-completion-toast'
+import { FocusOverlay } from '@/components/command-palette/focus-overlay'
+import { GoalFormModal } from '@/components/goals/goal-form-modal'
+import { HabitFormModal } from '@/components/habits/habit-form-modal'
 import { QuestCompletionToast } from '@/components/quests/quest-completion-toast'
 import { GoalCompletionToast } from '@/components/goals/goal-completion-toast'
 import { HabitCompletionToast } from '@/components/habits/habit-completion-toast'
+import { QuestFormModal } from '@/components/quests/quest-form-modal'
 import { useMotionConfig } from '@/hooks/use-motion'
+import { useCommandPaletteStore } from '@/stores/command-palette-store'
 
 const navItems = [
   { to: ROUTES.dashboard, label: 'Dashboard', icon: LayoutDashboard },
@@ -72,6 +81,9 @@ function NavItem({
 
 export function AppShell() {
   const location = useLocation()
+  const openPalette = useCommandPaletteStore((s) => s.open)
+  const activeModal = useCommandPaletteStore((s) => s.activeModal)
+  const closeModal = useCommandPaletteStore((s) => s.closeModal)
 
   return (
     <div className="mesh-bg flex min-h-screen">
@@ -111,6 +123,21 @@ export function AppShell() {
             </motion.div>
           ))}
         </nav>
+        <div className="border-t border-border/80 p-3">
+          <button
+            type="button"
+            onClick={openPalette}
+            className="flex w-full items-center justify-between gap-2 rounded-lg border border-border/60 bg-surface/50 px-3 py-2.5 text-sm text-foreground-secondary transition-colors hover:border-accent/40 hover:text-foreground"
+          >
+            <span className="flex items-center gap-2">
+              <Command className="h-4 w-4" aria-hidden />
+              Commands
+            </span>
+            <kbd className="rounded border border-border bg-surface px-1.5 py-0.5 font-mono text-[10px] text-muted">
+              ⌘K
+            </kbd>
+          </button>
+        </div>
       </aside>
 
       <main className="ml-60 flex-1">
@@ -122,9 +149,25 @@ export function AppShell() {
           </AnimatePresence>
         </div>
       </main>
+      <CommandPalette />
+      <FocusOverlay />
+      <QuestFormModal
+        open={activeModal === 'quest'}
+        onClose={closeModal}
+      />
+      <GoalFormModal
+        open={activeModal === 'goal'}
+        onClose={closeModal}
+      />
+      <HabitFormModal
+        open={activeModal === 'habit'}
+        onClose={closeModal}
+      />
       <QuestCompletionToast />
       <GoalCompletionToast />
       <HabitCompletionToast />
+      <FocusCompletionToast />
+      <CommandFeedbackToast />
     </div>
   )
 }
