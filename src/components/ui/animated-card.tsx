@@ -26,14 +26,21 @@ export function AnimatedCard({
       whileHover={
         reducedMotion
           ? undefined
-          : { y: -2, transition: { duration: 0.2 } }
+          : {
+              y: -3,
+              transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
+            }
       }
-      className={`rounded-xl border border-border p-5 backdrop-blur-sm transition-shadow hover:shadow-[0_8px_30px_rgba(0,0,0,0.35)] ${
+      className={`relative overflow-hidden rounded-xl border p-5 backdrop-blur-md transition-[box-shadow,border-color] duration-300 hover:border-accent/20 hover:shadow-[var(--shadow-card-hover)] ${
         elevated
-          ? 'bg-surface-elevated/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]'
-          : 'bg-surface/60'
+          ? 'glass-panel-elevated'
+          : 'border-border/80 bg-surface/55 shadow-[var(--shadow-card)]'
       } ${className}`}
     >
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        aria-hidden
+      />
       {children}
     </motion.div>
   )

@@ -34,7 +34,7 @@ export function LifeMapCanvas({
   const panZoom = usePanZoom(1)
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-surface/40">
+    <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-surface/40 shadow-[var(--shadow-card)]">
       <div className="absolute top-3 right-3 z-10 flex gap-1">
         <button
           type="button"
@@ -138,8 +138,15 @@ export function LifeMapCanvas({
                     stroke={selected ? 'var(--color-accent)' : 'var(--color-border)'}
                     strokeWidth={selected ? 2.5 : 1}
                     initial={reducedMotion ? false : { scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: i * 0.05 }}
+                    animate={{
+                      scale: selected ? 1.08 : 1,
+                    }}
+                    transition={{
+                      delay: i * 0.05,
+                      type: 'spring',
+                      stiffness: 380,
+                      damping: 26,
+                    }}
                   />
                   <circle
                     cx={0}

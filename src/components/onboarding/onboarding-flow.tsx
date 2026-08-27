@@ -54,7 +54,7 @@ export function OnboardingFlow() {
     >
       <motion.form
         onSubmit={(e) => void handleSubmit(e)}
-        className="w-full max-w-lg rounded-2xl border border-border bg-surface p-8 shadow-xl"
+        className="glass-panel-elevated w-full max-w-lg p-8"
         initial={reducedMotion ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
       >

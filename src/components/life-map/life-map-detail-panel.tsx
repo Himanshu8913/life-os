@@ -18,10 +18,13 @@ export function LifeMapDetailPanel({ area, onClose }: LifeMapDetailPanelProps) {
     <AnimatePresence>
       {area && (
         <motion.aside
-          className="rounded-xl border border-border bg-surface-elevated/95 p-5 backdrop-blur-md"
-          initial={reducedMotion ? false : { opacity: 0, x: 16 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={reducedMotion ? undefined : { opacity: 0, x: 8 }}
+          key={area.category}
+          layout
+          className="glass-panel-elevated p-5"
+          initial={reducedMotion ? false : { opacity: 0, x: 20, scale: 0.98 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          exit={reducedMotion ? undefined : { opacity: 0, x: 12, scale: 0.98 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
         >
           <div className="flex items-start justify-between gap-3">
             <div>

@@ -67,8 +67,9 @@ function NavItem({
               ? 'text-foreground'
               : 'text-foreground-secondary hover:text-foreground'
           }`}
-          whileHover={reducedMotion ? undefined : { x: 4 }}
-          transition={{ duration: 0.15 }}
+          whileHover={reducedMotion ? undefined : { x: 4, scale: 1.01 }}
+          whileTap={reducedMotion ? undefined : { scale: 0.99 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 28 }}
         >
           {isActive && (
             <motion.div
@@ -106,16 +107,19 @@ export function AppShell() {
       >
         Skip to content
       </a>
-      <aside className="fixed inset-y-0 left-0 z-10 flex w-60 flex-col border-r border-border/80 bg-surface/70 backdrop-blur-xl">
-        <div className="border-b border-border/80 px-6 py-7">
-          <motion.p
-            className="text-xs font-semibold tracking-[0.28em] text-muted uppercase"
+      <aside className="fixed inset-y-0 left-0 z-10 flex w-60 flex-col border-r border-border/60 bg-surface/50 backdrop-blur-2xl">
+        <div className="border-b border-border/60 px-6 py-7">
+          <motion.div
+            className="flex items-center gap-2"
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
           >
-            Life OS
-          </motion.p>
+            <div className="h-2 w-2 rounded-full bg-accent glow-accent" aria-hidden />
+            <p className="text-xs font-semibold tracking-[0.28em] text-muted uppercase">
+              Life OS
+            </p>
+          </motion.div>
           <motion.p
             className="mt-1.5 text-sm text-foreground-secondary"
             initial={{ opacity: 0, x: -8 }}
@@ -142,11 +146,14 @@ export function AppShell() {
             </motion.div>
           ))}
         </nav>
-        <div className="border-t border-border/80 p-3">
-          <button
+        <div className="border-t border-border/60 p-3">
+          <motion.button
             type="button"
             onClick={openPalette}
-            className="flex w-full items-center justify-between gap-2 rounded-lg border border-border/60 bg-surface/50 px-3 py-2.5 text-sm text-foreground-secondary transition-colors hover:border-accent/40 hover:text-foreground"
+            whileHover={{ scale: 1.01, borderColor: 'color-mix(in srgb, var(--color-accent) 40%, transparent)' }}
+            whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            className="flex w-full items-center justify-between gap-2 rounded-xl border border-border/60 bg-surface/40 px-3 py-2.5 text-sm text-foreground-secondary transition-colors hover:text-foreground"
           >
             <span className="flex items-center gap-2">
               <Command className="h-4 w-4" aria-hidden />
@@ -155,7 +162,7 @@ export function AppShell() {
             <kbd className="rounded border border-border bg-surface px-1.5 py-0.5 font-mono text-[10px] text-muted">
               ⌘K
             </kbd>
-          </button>
+          </motion.button>
         </div>
       </aside>
 
