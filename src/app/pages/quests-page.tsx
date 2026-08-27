@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Swords } from 'lucide-react'
 import { PageHeader } from '@/components/layout/page-header'
 import { QuestCard } from '@/components/quests/quest-card'
 import { QuestFormModal } from '@/components/quests/quest-form-modal'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 import { fadeUp, staggerContainer, useMotionConfig } from '@/hooks/use-motion'
 import { useQuestStore } from '@/stores/quest-store'
 import type { Quest } from '@/types'
@@ -93,17 +94,14 @@ export function QuestsPage() {
         key={tab}
       >
         {filtered.length === 0 ? (
-          <motion.div
-            variants={fadeUp}
-            className="rounded-xl border border-dashed border-border py-16 text-center"
-          >
-            <p className="text-sm text-foreground-secondary">
-              No quests in this view.
-            </p>
-            <Button className="mt-4" variant="secondary" onClick={openCreate}>
-              <Plus className="h-4 w-4" />
-              Create your first quest
-            </Button>
+          <motion.div variants={fadeUp}>
+            <EmptyState
+              title="No quests yet"
+              description="Your first quest starts here."
+              actionLabel="Create quest"
+              onAction={openCreate}
+              icon={<Swords className="h-8 w-8" />}
+            />
           </motion.div>
         ) : (
           filtered.map((quest, index) => (

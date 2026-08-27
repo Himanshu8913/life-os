@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Download, Repeat, Swords, Target } from 'lucide-react'
+import { Download, Repeat, Swords, Target, Timer } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { downloadBackup } from '@/lib/export/backup'
@@ -54,6 +54,14 @@ export function QuickActions({
           </Button>
         </motion.div>
       ))}
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={() => navigate(ROUTES.focus)}
+      >
+        <Timer className="h-3.5 w-3.5" />
+        Focus
+      </Button>
       <Button
         size="sm"
         variant="ghost"

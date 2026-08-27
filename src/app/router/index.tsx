@@ -10,11 +10,15 @@ import { TimelinePage } from '@/app/pages/timeline-page'
 import { LifeMapPage } from '@/app/pages/life-map-page'
 import { ObservatoryPage } from '@/app/pages/observatory-page'
 import { ReflectionPage } from '@/app/pages/reflection-page'
+import { ProfilePage } from '@/app/pages/profile-page'
+import { FocusPage } from '@/app/pages/focus-page'
 import { SettingsPage } from '@/app/pages/settings-page'
+import { RouteErrorFallback } from '@/components/layout/error-boundary'
 
 export const router = createBrowserRouter([
   {
     element: <AppShell />,
+    errorElement: <RouteErrorFallback />,
     children: [
       { path: ROUTES.dashboard, element: <DashboardPage /> },
       { path: ROUTES.quests, element: <QuestsPage /> },
@@ -25,6 +29,8 @@ export const router = createBrowserRouter([
       { path: ROUTES.lifeMap, element: <LifeMapPage /> },
       { path: ROUTES.observatory, element: <ObservatoryPage /> },
       { path: ROUTES.reflection, element: <ReflectionPage /> },
+      { path: ROUTES.profile, element: <ProfilePage /> },
+      { path: ROUTES.focus, element: <FocusPage /> },
       { path: ROUTES.settings, element: <SettingsPage /> },
     ],
   },

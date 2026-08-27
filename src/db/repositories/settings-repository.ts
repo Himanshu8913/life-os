@@ -6,11 +6,31 @@ const DEFAULT_SETTINGS: AppSettings = {
   accentColor: '#6366f1',
   reducedMotion: false,
   seedDataLoaded: false,
+  onboardingCompleted: false,
+  focusAreas: [],
+  notificationsEnabled: true,
+  notificationsQuestReminders: true,
+  notificationsAchievements: true,
+  weekStartDay: 1,
+}
+
+export function normalizeSettings(settings: Partial<AppSettings> & { id: 'default' }): AppSettings {
+  return {
+    ...DEFAULT_SETTINGS,
+    ...settings,
+    id: 'default',
+    onboardingCompleted: settings.onboardingCompleted ?? true,
+    focusAreas: settings.focusAreas ?? [],
+    notificationsEnabled: settings.notificationsEnabled ?? true,
+    notificationsQuestReminders: settings.notificationsQuestReminders ?? true,
+    notificationsAchievements: settings.notificationsAchievements ?? true,
+    weekStartDay: settings.weekStartDay ?? 1,
+  }
 }
 
 export async function getOrCreateSettings(): Promise<AppSettings> {
   const existing = await db.settings.get('default')
-  if (existing) return existing
+  if (existing) return normalizeSettings(existing)
   await db.settings.put(DEFAULT_SETTINGS)
   return DEFAULT_SETTINGS
 }
@@ -23,7 +43,7 @@ export async function updateSettings(
   updates: Partial<Omit<AppSettings, 'id'>>,
 ): Promise<AppSettings> {
   const settings = await getOrCreateSettings()
-  const updated: AppSettings = { ...settings, ...updates, id: 'default' }
+  const updated = normalizeSettings({ ...settings, ...updates })
   await db.settings.put(updated)
   return updated
 }

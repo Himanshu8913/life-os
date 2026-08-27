@@ -28,7 +28,9 @@ import { GoalCompletionToast } from '@/components/goals/goal-completion-toast'
 import { HabitCompletionToast } from '@/components/habits/habit-completion-toast'
 import { QuestFormModal } from '@/components/quests/quest-form-modal'
 import { useMotionConfig } from '@/hooks/use-motion'
+import { OnboardingFlow } from '@/components/onboarding/onboarding-flow'
 import { useCommandPaletteStore } from '@/stores/command-palette-store'
+import { useSettingsStore } from '@/stores/settings-store'
 
 const navItems = [
   { to: ROUTES.dashboard, label: 'Dashboard', icon: LayoutDashboard },
@@ -94,9 +96,16 @@ export function AppShell() {
   const openPalette = useCommandPaletteStore((s) => s.open)
   const activeModal = useCommandPaletteStore((s) => s.activeModal)
   const closeModal = useCommandPaletteStore((s) => s.closeModal)
+  const onboardingCompleted = useSettingsStore((s) => s.onboardingCompleted)
 
   return (
     <div className="mesh-bg flex min-h-screen">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-white"
+      >
+        Skip to content
+      </a>
       <aside className="fixed inset-y-0 left-0 z-10 flex w-60 flex-col border-r border-border/80 bg-surface/70 backdrop-blur-xl">
         <div className="border-b border-border/80 px-6 py-7">
           <motion.p
@@ -150,7 +159,7 @@ export function AppShell() {
         </div>
       </aside>
 
-      <main className="ml-60 flex-1">
+      <main id="main-content" className="ml-60 flex-1" tabIndex={-1}>
         <div className="mx-auto max-w-5xl px-8 py-10">
           <AnimatePresence mode="wait">
             <AnimatedPage key={location.pathname}>
@@ -180,6 +189,7 @@ export function AppShell() {
       <CommandFeedbackToast />
       <LevelUpOverlay />
       <AchievementUnlockToast />
+      {!onboardingCompleted && <OnboardingFlow />}
     </div>
   )
 }

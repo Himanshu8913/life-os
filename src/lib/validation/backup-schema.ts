@@ -147,6 +147,12 @@ const settingsSchema = z.object({
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   reducedMotion: z.boolean(),
   seedDataLoaded: z.boolean(),
+  onboardingCompleted: z.boolean().optional(),
+  focusAreas: z.array(z.enum(GOAL_CATEGORIES)).optional(),
+  notificationsEnabled: z.boolean().optional(),
+  notificationsQuestReminders: z.boolean().optional(),
+  notificationsAchievements: z.boolean().optional(),
+  weekStartDay: z.union([z.literal(0), z.literal(1)]).optional(),
 })
 
 export const backupSchema = z.object({

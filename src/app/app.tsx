@@ -5,6 +5,10 @@ import { initDatabase } from '@/db/database'
 import { hydrateStores } from '@/db/hydrate'
 import { router } from '@/app/router'
 import { LoadingScreen } from '@/components/layout/animated-page'
+import {
+  DbErrorScreen,
+  ErrorBoundary,
+} from '@/components/layout/error-boundary'
 import { useSettingsStore } from '@/stores/settings-store'
 
 /**
@@ -13,7 +17,8 @@ import { useSettingsStore } from '@/stores/settings-store'
  * Bootstraps IndexedDB, hydrates Zustand stores, and syncs accent color to CSS.
  */
 export function App() {
-  const { isHydrated, accentColor, setDbReady, setHydrated } = useSettingsStore()
+  const { isHydrated, isDbReady, accentColor, setDbReady, setHydrated } =
+    useSettingsStore()
 
   useEffect(() => {
     document.documentElement.style.setProperty('--color-accent', accentColor)
@@ -40,12 +45,16 @@ export function App() {
     }
   }, [setDbReady, setHydrated])
 
+  if (isHydrated && !isDbReady) {
+    return <DbErrorScreen />
+  }
+
   return (
-    <>
+    <ErrorBoundary>
       <AnimatePresence>
         {!isHydrated && <LoadingScreen key="loading" />}
       </AnimatePresence>
       {isHydrated && <RouterProvider router={router} />}
-    </>
+    </ErrorBoundary>
   )
 }

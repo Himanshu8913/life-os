@@ -3,7 +3,7 @@ import type { LifeOSBackup } from '@/types/backup'
 import type { TimelineEvent } from '@/types'
 import { clearAllTables, db } from '@/db/database'
 import { getOrCreateProfile } from '@/db/repositories/profile-repository'
-import { getOrCreateSettings } from '@/db/repositories/settings-repository'
+import { getOrCreateSettings, normalizeSettings } from '@/db/repositories/settings-repository'
 import { getAllAchievements } from '@/db/repositories/achievement-repository'
 import { getAllGoals } from '@/db/repositories/goal-repository'
 import { getAllHabits, getHabitCompletions } from '@/db/repositories/habit-repository'
@@ -107,7 +107,7 @@ export async function importAllData(raw: unknown): Promise<void> {
     ],
     async () => {
       await db.profile.put(backup.profile)
-      await db.settings.put(backup.settings)
+      await db.settings.put(normalizeSettings(backup.settings))
       await db.quests.bulkPut(backup.quests)
       await db.goals.bulkPut(backup.goals)
       await db.habits.bulkPut(backup.habits)

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Download,
@@ -6,6 +7,8 @@ import {
   Trash2,
   Palette,
   Accessibility,
+  Bell,
+  User,
   CheckCircle2,
   AlertCircle,
   Loader2,
@@ -15,14 +18,25 @@ import { AnimatedCard } from '@/components/ui/animated-card'
 import { Button } from '@/components/ui/button'
 import { reloadStores } from '@/db/hydrate'
 import { downloadBackup, importAllData, resetAllData } from '@/lib/export/backup'
+import { ROUTES } from '@/lib/constants'
 import { fadeUp, staggerContainer, useMotionConfig } from '@/hooks/use-motion'
 import { useSettingsStore } from '@/stores/settings-store'
 
 type ActionStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export function SettingsPage() {
-  const { accentColor, reducedMotion, setAccentColor, setReducedMotion } =
-    useSettingsStore()
+  const {
+    accentColor,
+    reducedMotion,
+    notificationsEnabled,
+    notificationsQuestReminders,
+    notificationsAchievements,
+    setAccentColor,
+    setReducedMotion,
+    setNotificationsEnabled,
+    setNotificationsQuestReminders,
+    setNotificationsAchievements,
+  } = useSettingsStore()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { initial } = useMotionConfig()
 
@@ -92,7 +106,14 @@ export function SettingsPage() {
       <PageHeader
         title="Settings"
         description="Customize your Life OS experience and manage your data."
-      />
+      >
+        <Link to={ROUTES.profile}>
+          <Button variant="secondary" size="sm">
+            <User className="h-4 w-4" />
+            Profile
+          </Button>
+        </Link>
+      </PageHeader>
 
       <motion.div
         className="space-y-4"
@@ -127,6 +148,53 @@ export function SettingsPage() {
         <AnimatedCard delay={0.05}>
           <motion.div variants={fadeUp}>
             <div className="mb-4 flex items-center gap-2">
+              <Bell className="h-4 w-4 text-accent" />
+              <h2 className="text-sm font-medium">Notifications</h2>
+            </div>
+            <p className="mb-4 text-sm text-foreground-secondary">
+              Local preferences only — no data leaves your device.
+            </p>
+            <div className="space-y-3 text-sm">
+              <label className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={notificationsEnabled}
+                  onChange={(e) => setNotificationsEnabled(e.target.checked)}
+                  className="h-4 w-4 rounded border-border accent-accent"
+                />
+                Enable notifications
+              </label>
+              <label className="flex items-center gap-3 pl-6 text-foreground-secondary">
+                <input
+                  type="checkbox"
+                  checked={notificationsQuestReminders}
+                  onChange={(e) =>
+                    setNotificationsQuestReminders(e.target.checked)
+                  }
+                  disabled={!notificationsEnabled}
+                  className="h-4 w-4 rounded border-border accent-accent disabled:opacity-50"
+                />
+                Quest reminders
+              </label>
+              <label className="flex items-center gap-3 pl-6 text-foreground-secondary">
+                <input
+                  type="checkbox"
+                  checked={notificationsAchievements}
+                  onChange={(e) =>
+                    setNotificationsAchievements(e.target.checked)
+                  }
+                  disabled={!notificationsEnabled}
+                  className="h-4 w-4 rounded border-border accent-accent disabled:opacity-50"
+                />
+                Achievement alerts
+              </label>
+            </div>
+          </motion.div>
+        </AnimatedCard>
+
+        <AnimatedCard delay={0.08}>
+          <motion.div variants={fadeUp}>
+            <div className="mb-4 flex items-center gap-2">
               <Accessibility className="h-4 w-4 text-accent" />
               <h2 className="text-sm font-medium">Accessibility</h2>
             </div>
@@ -142,7 +210,7 @@ export function SettingsPage() {
           </motion.div>
         </AnimatedCard>
 
-        <AnimatedCard elevated delay={0.1}>
+        <AnimatedCard elevated delay={0.12}>
           <motion.div variants={fadeUp}>
             <h2 className="text-sm font-medium">Data Management</h2>
             <p className="mt-1 text-sm text-foreground-secondary">
@@ -202,6 +270,22 @@ export function SettingsPage() {
                 {statusMessage}
               </motion.p>
             )}
+          </motion.div>
+        </AnimatedCard>
+
+        <AnimatedCard delay={0.15}>
+          <motion.div variants={fadeUp}>
+            <h2 className="text-sm font-medium">About</h2>
+            <p className="mt-2 text-sm text-foreground-secondary">
+              Life OS v0.1.0 — your personal operating system. All data stays
+              on this device.
+            </p>
+            <Link
+              to={ROUTES.focus}
+              className="mt-3 inline-block text-sm text-accent hover:underline"
+            >
+              Open focus mode
+            </Link>
           </motion.div>
         </AnimatedCard>
       </motion.div>

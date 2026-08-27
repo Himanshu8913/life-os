@@ -11,6 +11,8 @@ export const ROUTES = {
   lifeMap: '/life-map',
   observatory: '/observatory',
   reflection: '/reflection',
+  profile: '/profile',
+  focus: '/focus',
   settings: '/settings',
 } as const
 

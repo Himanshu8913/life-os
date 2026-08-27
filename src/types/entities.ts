@@ -134,6 +134,12 @@ export interface AppSettings {
   accentColor: string
   reducedMotion: boolean
   seedDataLoaded: boolean
+  onboardingCompleted: boolean
+  focusAreas: GoalCategory[]
+  notificationsEnabled: boolean
+  notificationsQuestReminders: boolean
+  notificationsAchievements: boolean
+  weekStartDay: 0 | 1
 }
 
 export interface LifeArea {

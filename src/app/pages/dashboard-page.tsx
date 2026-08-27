@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Check, Flame } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { DailyCheckIn } from '@/components/check-in/daily-check-in'
 import { DashboardHero } from '@/components/dashboard/dashboard-hero'
 import { LifeAttributesPanel } from '@/components/dashboard/life-attributes-panel'
 import { MomentumSummary } from '@/components/dashboard/momentum-summary'
@@ -112,6 +113,8 @@ export function DashboardPage() {
         onNewGoal={() => openModal('goal')}
         onNewHabit={() => openModal('habit')}
       />
+
+      <DailyCheckIn />
 
       <motion.div
         className="grid gap-4 lg:grid-cols-3"
