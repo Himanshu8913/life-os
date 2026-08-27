@@ -1,0 +1,23 @@
+import { createBrowserRouter } from 'react-router-dom'
+import { AppShell } from '@/components/layout/app-shell'
+import { ROUTES } from '@/lib/constants'
+import { DashboardPage } from '@/app/pages/dashboard-page'
+import { QuestsPage } from '@/app/pages/quests-page'
+import { GoalsPage } from '@/app/pages/goals-page'
+import { HabitsPage } from '@/app/pages/habits-page'
+import { TimelinePage } from '@/app/pages/timeline-page'
+import { SettingsPage } from '@/app/pages/settings-page'
+
+export const router = createBrowserRouter([
+  {
+    element: <AppShell />,
+    children: [
+      { path: ROUTES.dashboard, element: <DashboardPage /> },
+      { path: ROUTES.quests, element: <QuestsPage /> },
+      { path: ROUTES.goals, element: <GoalsPage /> },
+      { path: ROUTES.habits, element: <HabitsPage /> },
+      { path: ROUTES.timeline, element: <TimelinePage /> },
+      { path: ROUTES.settings, element: <SettingsPage /> },
+    ],
+  },
+])
