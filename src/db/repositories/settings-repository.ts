@@ -12,6 +12,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   notificationsQuestReminders: true,
   notificationsAchievements: true,
   weekStartDay: 1,
+  dailyMissionDate: '',
+  dailyMissionRewardedIds: [],
 }
 
 export function normalizeSettings(settings: Partial<AppSettings> & { id: 'default' }): AppSettings {
@@ -25,6 +27,8 @@ export function normalizeSettings(settings: Partial<AppSettings> & { id: 'defaul
     notificationsQuestReminders: settings.notificationsQuestReminders ?? true,
     notificationsAchievements: settings.notificationsAchievements ?? true,
     weekStartDay: settings.weekStartDay ?? 1,
+    dailyMissionDate: settings.dailyMissionDate ?? '',
+    dailyMissionRewardedIds: settings.dailyMissionRewardedIds ?? [],
   }
 }
 

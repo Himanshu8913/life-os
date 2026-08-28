@@ -153,6 +153,8 @@ const settingsSchema = z.object({
   notificationsQuestReminders: z.boolean().optional(),
   notificationsAchievements: z.boolean().optional(),
   weekStartDay: z.union([z.literal(0), z.literal(1)]).optional(),
+  dailyMissionDate: z.string().optional(),
+  dailyMissionRewardedIds: z.array(z.string()).optional(),
 })
 
 export const backupSchema = z.object({

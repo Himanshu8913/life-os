@@ -11,6 +11,7 @@ import { getAllTimelineEvents } from '@/db/repositories/timeline-repository'
 import { syncGamificationAfterAction } from '@/lib/gamification/sync-gamification'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
+import { useDailyMissionStore } from '@/stores/daily-mission-store'
 
 export interface ActiveFocus {
   sessionId: string
@@ -78,6 +79,8 @@ export const useFocusStore = create<FocusState>((set, get) => ({
       leveledUp: result.leveledUp,
       newLevel: result.newLevel,
     })
+
+    await useDailyMissionStore.getState().sync()
 
     set({
       active: null,

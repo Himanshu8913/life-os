@@ -10,6 +10,7 @@ import { AnimatedCard } from '@/components/ui/animated-card'
 import { fadeUp } from '@/hooks/use-motion'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
+import { useDailyMissionStore } from '@/stores/daily-mission-store'
 
 const MOOD_EMOJI = ['', '😞', '😕', '😐', '🙂', '🤩'] as const
 
@@ -88,6 +89,7 @@ export function DailyCheckIn() {
       setMoodEntries(entries)
       setEvents(events)
       setDone(true)
+      await useDailyMissionStore.getState().sync()
     } finally {
       setSubmitting(false)
     }

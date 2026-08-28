@@ -21,6 +21,7 @@ import { CommandFeedbackToast } from '@/components/command-palette/command-feedb
 import { CommandPalette } from '@/components/command-palette/command-palette'
 import { FocusCompletionToast } from '@/components/command-palette/focus-completion-toast'
 import { FocusOverlay } from '@/components/command-palette/focus-overlay'
+import { DailyMissionToast } from '@/components/dashboard/daily-mission-toast'
 import { GoalFormModal } from '@/components/goals/goal-form-modal'
 import { HabitFormModal } from '@/components/habits/habit-form-modal'
 import { QuestCompletionToast } from '@/components/quests/quest-completion-toast'
@@ -199,6 +200,7 @@ export function AppShell() {
       <CommandFeedbackToast />
       <LevelUpOverlay />
       <AchievementUnlockToast />
+      <DailyMissionToast />
       {!onboardingCompleted && <OnboardingFlow />}
     </div>
   )

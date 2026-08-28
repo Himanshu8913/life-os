@@ -13,6 +13,7 @@ import { syncGamificationAfterAction } from '@/lib/gamification/sync-gamificatio
 import { useGoalStore } from '@/stores/goal-store'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
+import { useDailyMissionStore } from '@/stores/daily-mission-store'
 import type { Priority, Quest, QuestStatus, QuestType } from '@/types'
 
 export interface CreateQuestInput {
@@ -125,6 +126,7 @@ export const useQuestStore = create<QuestState>((set, get) => ({
       leveledUp: result.leveledUp,
       newLevel: result.newLevel,
     })
+    await useDailyMissionStore.getState().sync()
   },
 
   archiveQuest: async (id) => {

@@ -11,6 +11,7 @@ import { getAllTimelineEvents } from '@/db/repositories/timeline-repository'
 import { syncGamificationAfterAction } from '@/lib/gamification/sync-gamification'
 import { useProfileStore } from '@/stores/profile-store'
 import { useTimelineStore } from '@/stores/timeline-store'
+import { useDailyMissionStore } from '@/stores/daily-mission-store'
 import type { Habit, HabitCompletion, HabitFrequency } from '@/types'
 
 export interface HabitToast {
@@ -132,5 +133,7 @@ export const useHabitStore = create<HabitState>((set, get) => ({
         newLevel: result.newLevel,
       })
     }
+
+    await useDailyMissionStore.getState().sync()
   },
 }))

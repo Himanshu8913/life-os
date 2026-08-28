@@ -140,6 +140,8 @@ export interface AppSettings {
   notificationsQuestReminders: boolean
   notificationsAchievements: boolean
   weekStartDay: 0 | 1
+  dailyMissionDate?: string
+  dailyMissionRewardedIds?: string[]
 }
 
 export interface LifeArea {

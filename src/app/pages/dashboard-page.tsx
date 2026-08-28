@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Check, Flame } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { DailyCheckIn } from '@/components/check-in/daily-check-in'
+import { DailyMissionBoard } from '@/components/dashboard/daily-mission-board'
 import { DashboardHero } from '@/components/dashboard/dashboard-hero'
 import { LifeAttributesPanel } from '@/components/dashboard/life-attributes-panel'
 import { MomentumSummary } from '@/components/dashboard/momentum-summary'
@@ -23,6 +24,7 @@ import { formatDashboardDate, getGreeting } from '@/lib/dates/greeting'
 import { ROUTES } from '@/lib/constants'
 import { staggerContainer, useMotionConfig } from '@/hooks/use-motion'
 import { useCommandPaletteStore } from '@/stores/command-palette-store'
+import { useDailyMissionStore } from '@/stores/daily-mission-store'
 import { useGoalStore } from '@/stores/goal-store'
 import { useHabitStore } from '@/stores/habit-store'
 import { useProfileStore } from '@/stores/profile-store'
@@ -53,6 +55,11 @@ export function DashboardPage() {
   const [completingId, setCompletingId] = useState<string | null>(null)
   const [togglingHabitId, setTogglingHabitId] = useState<string | null>(null)
   const openModal = useCommandPaletteStore((s) => s.openModal)
+  const syncMissions = useDailyMissionStore((s) => s.sync)
+
+  useEffect(() => {
+    void syncMissions()
+  }, [syncMissions])
 
   const now = useMemo(() => new Date(), [])
   const totalXp = profile?.totalXp ?? 0
@@ -113,6 +120,8 @@ export function DashboardPage() {
         onNewGoal={() => openModal('goal')}
         onNewHabit={() => openModal('habit')}
       />
+
+      <DailyMissionBoard />
 
       <DailyCheckIn />
 
