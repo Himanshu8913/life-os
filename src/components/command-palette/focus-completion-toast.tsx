@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Timer, X } from 'lucide-react'
+import { useAutoDismiss } from '@/hooks/use-auto-dismiss'
 import { useMotionConfig } from '@/hooks/use-motion'
 import { useFocusStore } from '@/stores/focus-store'
 
@@ -7,6 +8,8 @@ export function FocusCompletionToast() {
   const toast = useFocusStore((s) => s.toast)
   const dismissToast = useFocusStore((s) => s.dismissToast)
   const { reducedMotion } = useMotionConfig()
+
+  useAutoDismiss(toast?.id, dismissToast)
 
   return (
     <AnimatePresence>

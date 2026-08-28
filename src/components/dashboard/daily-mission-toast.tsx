@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, X } from 'lucide-react'
+import { useAutoDismiss } from '@/hooks/use-auto-dismiss'
 import { useMotionConfig } from '@/hooks/use-motion'
 import { useDailyMissionStore } from '@/stores/daily-mission-store'
 
@@ -7,6 +8,8 @@ export function DailyMissionToast() {
   const toast = useDailyMissionStore((s) => s.toast)
   const dismiss = useDailyMissionStore((s) => s.dismissToast)
   const { reducedMotion } = useMotionConfig()
+
+  useAutoDismiss(toast?.id, dismiss)
 
   return (
     <AnimatePresence>
