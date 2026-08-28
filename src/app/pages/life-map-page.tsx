@@ -52,11 +52,13 @@ export function LifeMapPage() {
       />
 
       <motion.div
-        className="mb-4 rounded-xl border border-border/60 bg-surface/50 px-4 py-3 text-sm text-foreground-secondary"
+        className="mb-4 rounded-xl border border-violet-400/20 bg-gradient-to-r from-violet-500/10 via-fuchsia-500/10 to-cyan-500/10 px-4 py-3 text-sm text-foreground-secondary"
         initial={initial}
         animate={{ opacity: 1 }}
       >
-        <span className="font-mono text-accent">{mapData.center.totalProgress}%</span>{' '}
+        <span className="text-gradient-accent font-mono font-semibold">
+          {mapData.center.totalProgress}%
+        </span>{' '}
         average progress across {mapData.center.activeAreas} active areas
       </motion.div>
 

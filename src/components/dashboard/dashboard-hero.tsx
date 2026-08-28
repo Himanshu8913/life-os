@@ -32,18 +32,26 @@ export function DashboardHero({
       className="glass-panel-elevated relative overflow-hidden p-6 md:p-8"
     >
       <div
-        className="animate-pulse-glow pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-40"
+        className="animate-pulse-glow pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-50"
         style={{
           background:
-            'radial-gradient(circle, color-mix(in srgb, var(--color-accent) 45%, transparent), transparent 70%)',
+            'radial-gradient(circle, rgba(232, 121, 249, 0.55), transparent 70%)',
         }}
         aria-hidden
       />
       <div
-        className="animate-float-delayed pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full opacity-20"
+        className="animate-float-delayed pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full opacity-35"
         style={{
           background:
-            'radial-gradient(circle, color-mix(in srgb, var(--color-success) 50%, transparent), transparent 70%)',
+            'radial-gradient(circle, rgba(34, 211, 238, 0.5), transparent 70%)',
+        }}
+        aria-hidden
+      />
+      <div
+        className="animate-float pointer-events-none absolute right-1/4 top-1/2 h-28 w-28 rounded-full opacity-25"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(251, 146, 60, 0.55), transparent 70%)',
         }}
         aria-hidden
       />
@@ -74,8 +82,8 @@ export function DashboardHero({
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.15, type: 'spring', stiffness: 400 }}
             >
-              <Sparkles className="h-4 w-4 text-accent" />
-              <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-xs font-medium tracking-[0.2em] text-accent uppercase">
+              <Sparkles className="h-4 w-4 text-fuchsia-400" />
+              <span className="rounded-full border border-fuchsia-400/40 bg-gradient-to-r from-violet-500/20 via-fuchsia-500/20 to-cyan-500/20 px-2.5 py-0.5 text-xs font-medium tracking-[0.2em] text-fuchsia-200 uppercase">
                 Level {level}
               </span>
             </motion.div>
@@ -95,7 +103,7 @@ export function DashboardHero({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <p className="font-mono text-2xl font-semibold tabular-nums">
+            <p className="text-gradient-warm font-mono text-2xl font-semibold tabular-nums">
               {totalXp.toLocaleString()}
             </p>
             <p className="text-xs text-muted">total XP</p>

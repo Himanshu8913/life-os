@@ -33,27 +33,29 @@ import { useCommandPaletteStore } from '@/stores/command-palette-store'
 import { useSettingsStore } from '@/stores/settings-store'
 
 const navItems = [
-  { to: ROUTES.dashboard, label: 'Dashboard', icon: LayoutDashboard },
-  { to: ROUTES.quests, label: 'Quests', icon: Swords },
-  { to: ROUTES.goals, label: 'Goals', icon: Target },
-  { to: ROUTES.habits, label: 'Habits', icon: Repeat },
-  { to: ROUTES.achievements, label: 'Achievements', icon: Trophy },
-  { to: ROUTES.lifeMap, label: 'Life Map', icon: Map },
-  { to: ROUTES.observatory, label: 'Observatory', icon: Telescope },
-  { to: ROUTES.reflection, label: 'Reflection', icon: BookOpen },
-  { to: ROUTES.timeline, label: 'Timeline', icon: Clock },
-  { to: ROUTES.settings, label: 'Settings', icon: Settings },
+  { to: ROUTES.dashboard, label: 'Dashboard', icon: LayoutDashboard, color: 'text-violet-400' },
+  { to: ROUTES.quests, label: 'Quests', icon: Swords, color: 'text-orange-400' },
+  { to: ROUTES.goals, label: 'Goals', icon: Target, color: 'text-emerald-400' },
+  { to: ROUTES.habits, label: 'Habits', icon: Repeat, color: 'text-cyan-400' },
+  { to: ROUTES.achievements, label: 'Achievements', icon: Trophy, color: 'text-amber-400' },
+  { to: ROUTES.lifeMap, label: 'Life Map', icon: Map, color: 'text-rose-400' },
+  { to: ROUTES.observatory, label: 'Observatory', icon: Telescope, color: 'text-sky-400' },
+  { to: ROUTES.reflection, label: 'Reflection', icon: BookOpen, color: 'text-fuchsia-400' },
+  { to: ROUTES.timeline, label: 'Timeline', icon: Clock, color: 'text-indigo-400' },
+  { to: ROUTES.settings, label: 'Settings', icon: Settings, color: 'text-slate-400' },
 ] as const
 
 function NavItem({
   to,
   label,
   icon: Icon,
+  color,
   end,
 }: {
   to: string
   label: string
   icon: typeof LayoutDashboard
+  color: string
   end?: boolean
 }) {
   const { reducedMotion } = useMotionConfig()
@@ -84,7 +86,7 @@ function NavItem({
               className="absolute -left-3 top-1/2 h-5 w-1 -translate-y-1/2 rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]"
             />
           )}
-          <Icon className="relative z-10 h-4 w-4" aria-hidden />
+          <Icon className={`relative z-10 h-4 w-4 ${isActive ? color : `${color} opacity-70`}`} aria-hidden />
           <span className="relative z-10 font-medium">{label}</span>
         </motion.div>
       )}
@@ -115,8 +117,8 @@ export function AppShell() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="h-2 w-2 rounded-full bg-accent glow-accent" aria-hidden />
-            <p className="text-xs font-semibold tracking-[0.28em] text-muted uppercase">
+            <div className="h-2 w-2 rounded-full bg-gradient-vivid glow-accent" aria-hidden />
+            <p className="text-gradient-accent text-xs font-semibold tracking-[0.28em] uppercase">
               Life OS
             </p>
           </motion.div>
@@ -130,7 +132,7 @@ export function AppShell() {
           </motion.p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3" aria-label="Main">
-          {navItems.map(({ to, label, icon }, index) => (
+          {navItems.map(({ to, label, icon, color }, index) => (
             <motion.div
               key={to}
               initial={{ opacity: 0, x: -12 }}
@@ -141,6 +143,7 @@ export function AppShell() {
                 to={to}
                 label={label}
                 icon={icon}
+                color={color}
                 end={to === ROUTES.dashboard}
               />
             </motion.div>

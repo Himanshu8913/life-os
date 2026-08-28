@@ -6,6 +6,8 @@ interface ProgressBarProps {
   max?: number
   label?: string
   className?: string
+  /** Single hex color — overrides the default rainbow gradient */
+  color?: string
 }
 
 export function ProgressBar({
@@ -13,6 +15,7 @@ export function ProgressBar({
   max = 100,
   label,
   className = '',
+  color,
 }: ProgressBarProps) {
   const { reducedMotion } = useMotionConfig()
   const percent = Math.min(100, Math.max(0, (value / max) * 100))
@@ -34,7 +37,8 @@ export function ProgressBar({
         aria-label={label}
       >
         <motion.div
-          className="relative h-full rounded-full bg-gradient-to-r from-accent/80 via-accent to-accent/90"
+          className={`relative h-full rounded-full ${color ? '' : 'progress-gradient'}`}
+          style={color ? { background: color } : undefined}
           initial={false}
           animate={{ width: `${percent}%` }}
           transition={
@@ -45,10 +49,10 @@ export function ProgressBar({
         >
           {!reducedMotion && percent > 0 && (
             <div
-              className="absolute inset-0 animate-shimmer rounded-full opacity-40"
+              className="absolute inset-0 animate-shimmer rounded-full opacity-50"
               style={{
                 background:
-                  'linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent)',
+                  'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)',
               }}
               aria-hidden
             />

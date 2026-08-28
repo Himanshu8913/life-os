@@ -3,7 +3,7 @@ import type { AppSettings } from '@/types'
 
 const DEFAULT_SETTINGS: AppSettings = {
   id: 'default',
-  accentColor: '#6366f1',
+  accentColor: '#818cf8',
   reducedMotion: false,
   seedDataLoaded: false,
   onboardingCompleted: false,

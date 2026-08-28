@@ -14,7 +14,7 @@ type ButtonProps = Omit<HTMLMotionProps<'button'>, 'children'> & {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-accent text-white hover:bg-accent/90 border-transparent shadow-[0_2px_16px_color-mix(in_srgb,var(--color-accent)_35%,transparent)]',
+    'bg-gradient-vivid text-white hover:opacity-90 border-transparent shadow-[0_4px_24px_color-mix(in_srgb,var(--color-violet)_45%,transparent)]',
   secondary:
     'bg-surface-elevated text-foreground hover:bg-surface-elevated/80 border-border',
   ghost:

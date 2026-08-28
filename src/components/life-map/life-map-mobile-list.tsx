@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { GOAL_CATEGORY_META } from '@/domain/goals/category-meta'
 import type { LifeAreaNode } from '@/domain/life-map/build-life-map'
 import { ProgressBar } from '@/components/ui/progress-bar'
 import { fadeUp, staggerContainer, useMotionConfig } from '@/hooks/use-motion'
@@ -26,36 +27,50 @@ export function LifeMapMobileList({
     >
       {areas.map((area) => {
         const selected = selectedCategory === area.category
+        const meta = GOAL_CATEGORY_META[area.category]
         return (
           <motion.li key={area.category} variants={fadeUp}>
             <button
               type="button"
               onClick={() => onSelectCategory(area.category)}
-              className={`w-full rounded-xl border p-4 text-left transition-colors ${
+              className={`w-full rounded-xl border p-4 text-left transition-all ${
                 selected
-                  ? 'border-accent/50 bg-accent/10'
-                  : 'border-border bg-surface/60 hover:border-accent/30'
+                  ? `${meta.border} ${meta.bg}`
+                  : 'border-border/70 bg-surface/50 hover:border-border'
               }`}
+              style={
+                selected
+                  ? { boxShadow: `0 0 24px ${meta.hex}33` }
+                  : undefined
+              }
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl" aria-hidden>
+                  <span
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl text-xl ${meta.bg} ring-1 ${meta.border}`}
+                    aria-hidden
+                  >
                     {area.icon}
                   </span>
                   <div>
-                    <p className="font-medium">{area.label}</p>
+                    <p className={`font-medium ${selected ? meta.color : ''}`}>
+                      {area.label}
+                    </p>
                     <p className="text-xs text-muted">
                       {area.stats.activeGoals} goals · {area.stats.activeQuests}{' '}
                       quests
                     </p>
                   </div>
                 </div>
-                <span className="font-mono text-sm text-accent">
+                <span className="font-mono text-sm" style={{ color: meta.hex }}>
                   {area.stats.progressScore}%
                 </span>
               </div>
               <div className="mt-3">
-                <ProgressBar value={area.stats.progressScore} />
+                <ProgressBar
+                  value={area.stats.progressScore}
+                  color={`linear-gradient(90deg, ${meta.hex}, ${meta.hex}88)`}
+                />
               </div>
             </button>
           </motion.li>

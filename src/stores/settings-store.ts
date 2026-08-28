@@ -32,7 +32,7 @@ export interface SettingsState {
 }
 
 export const useSettingsStore = create<SettingsState>((set) => ({
-  accentColor: '#6366f1',
+  accentColor: '#818cf8',
   reducedMotion: false,
   onboardingCompleted: true,
   focusAreas: [],

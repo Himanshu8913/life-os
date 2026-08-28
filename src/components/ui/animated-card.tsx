@@ -31,14 +31,12 @@ export function AnimatedCard({
               transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] },
             }
       }
-      className={`relative overflow-hidden rounded-xl border p-5 backdrop-blur-md transition-[box-shadow,border-color] duration-300 hover:border-accent/20 hover:shadow-[var(--shadow-card-hover)] ${
-        elevated
-          ? 'glass-panel-elevated'
-          : 'border-border/80 bg-surface/55 shadow-[var(--shadow-card)]'
-      } ${className}`}
+      className={`relative overflow-hidden ${
+        elevated ? 'glass-panel-elevated' : 'glass-panel'
+      } p-5 transition-[box-shadow] duration-300 hover:shadow-[var(--shadow-card-hover)] ${className}`}
     >
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-violet-400/50 to-transparent opacity-60"
         aria-hidden
       />
       {children}

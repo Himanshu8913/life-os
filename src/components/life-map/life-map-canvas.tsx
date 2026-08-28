@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Minus, Plus, RotateCcw } from 'lucide-react'
+import { GOAL_CATEGORY_META } from '@/domain/goals/category-meta'
 import { getNodePosition } from '@/domain/life-map/layout'
 import type { LifeAreaNode, LifeMapCenter } from '@/domain/life-map/build-life-map'
 import { usePanZoom } from '@/hooks/use-pan-zoom'
@@ -18,9 +19,9 @@ interface LifeMapCanvasProps {
   onSelectCategory: (category: GoalCategory | null) => void
 }
 
-function progressColor(score: number): string {
-  if (score >= 70) return 'var(--color-success)'
-  if (score >= 40) return 'var(--color-accent)'
+function progressColor(score: number, categoryHex: string): string {
+  if (score >= 70) return 'var(--color-emerald)'
+  if (score >= 40) return categoryHex
   return 'var(--color-muted)'
 }
 
@@ -34,7 +35,7 @@ export function LifeMapCanvas({
   const panZoom = usePanZoom(1)
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-surface/40 shadow-[var(--shadow-card)]">
+    <div className="glass-panel relative overflow-hidden shadow-[var(--shadow-card)]">
       <div className="absolute top-3 right-3 z-10 flex gap-1">
         <button
           type="button"
@@ -86,6 +87,7 @@ export function LifeMapCanvas({
             {areas.map((area) => {
               const pos = getNodePosition(area.angle, RADIUS, CENTER, CENTER)
               const selected = selectedCategory === area.category
+              const meta = GOAL_CATEGORY_META[area.category]
               return (
                 <line
                   key={`line-${area.category}`}
@@ -95,10 +97,10 @@ export function LifeMapCanvas({
                   y2={pos.y}
                   stroke={
                     selected
-                      ? 'color-mix(in srgb, var(--color-accent) 60%, transparent)'
-                      : 'color-mix(in srgb, var(--color-border) 80%, transparent)'
+                      ? `${meta.hex}99`
+                      : `${meta.hex}33`
                   }
-                  strokeWidth={selected ? 2 : 1}
+                  strokeWidth={selected ? 2.5 : 1}
                 />
               )
             })}
@@ -108,6 +110,7 @@ export function LifeMapCanvas({
               const pos = getNodePosition(area.angle, RADIUS, CENTER, CENTER)
               const selected = selectedCategory === area.category
               const score = area.stats.progressScore
+              const meta = GOAL_CATEGORY_META[area.category]
 
               return (
                 <g
@@ -134,9 +137,9 @@ export function LifeMapCanvas({
                     cx={0}
                     cy={0}
                     r={NODE_R}
-                    fill="color-mix(in srgb, var(--color-surface-elevated) 90%, transparent)"
-                    stroke={selected ? 'var(--color-accent)' : 'var(--color-border)'}
-                    strokeWidth={selected ? 2.5 : 1}
+                    fill={`${meta.hex}18`}
+                    stroke={selected ? meta.hex : `${meta.hex}55`}
+                    strokeWidth={selected ? 3 : 1.5}
                     initial={reducedMotion ? false : { scale: 0 }}
                     animate={{
                       scale: selected ? 1.08 : 1,
@@ -153,7 +156,7 @@ export function LifeMapCanvas({
                     cy={0}
                     r={NODE_R - 4}
                     fill="none"
-                    stroke={progressColor(score)}
+                    stroke={progressColor(score, meta.hex)}
                     strokeWidth={3}
                     strokeDasharray={`${(score / 100) * 2 * Math.PI * (NODE_R - 4)} ${2 * Math.PI * (NODE_R - 4)}`}
                     strokeLinecap="round"
@@ -197,13 +200,25 @@ export function LifeMapCanvas({
               tabIndex={0}
               aria-label={`You, level ${center.level}`}
             >
+              <defs>
+                <radialGradient id="centerGradient">
+                  <stop offset="0%" stopColor="#e879f9" stopOpacity="0.35" />
+                  <stop offset="50%" stopColor="#818cf8" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.1" />
+                </radialGradient>
+                <linearGradient id="centerStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#a78bfa" />
+                  <stop offset="50%" stopColor="#818cf8" />
+                  <stop offset="100%" stopColor="#22d3ee" />
+                </linearGradient>
+              </defs>
               <circle
                 cx={0}
                 cy={0}
                 r={48}
-                fill="color-mix(in srgb, var(--color-accent) 20%, var(--color-surface-elevated))"
-                stroke="var(--color-accent)"
-                strokeWidth={2}
+                fill="url(#centerGradient)"
+                stroke="url(#centerStroke)"
+                strokeWidth={2.5}
               />
               <text
                 textAnchor="middle"
